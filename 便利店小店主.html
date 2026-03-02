@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>便利店小店主 - MVP</title>
+    <title>便利店小店主 - v2</title>
     <style>
         * {
             margin: 0;
@@ -16,35 +16,230 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            overflow-x: hidden;
         }
 
-        .container {
-            max-width: 800px;
+        .game-container {
+            max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
+            background: linear-gradient(180deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        /* 场景区域 */
+        .scene {
+            position: relative;
+            height: 400px;
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F7FA 50%, #8BC34A 50%, #689F38 100%);
+            border-bottom: 4px solid #795548;
+            overflow: hidden;
+        }
+
+        /* 店铺建筑 */
+        .shop {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 200px;
+            background: linear-gradient(180deg, #FF9800 0%, #F57C00 100%);
+            border-radius: 10px 10px 0 0;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
-        h1 {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
+        .shop::before {
+            content: '🏪';
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 80px;
         }
 
-        .stats {
+        .shop-window {
+            position: absolute;
+            top: 20px;
+            left: 10%;
+            width: 25%;
+            height: 60px;
+            background: linear-gradient(180deg, #81D4FA 0%, #4FC3F7 100%);
+            border: 4px solid #5D4037;
+            border-radius: 5px;
+        }
+
+        .shop-window:nth-child(2) {
+            left: 65%;
+        }
+
+        /* 货架区 */
+        .shelf-area {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+        }
+
+        .shelf {
+            width: 120px;
+            height: 80px;
+            background: linear-gradient(180deg, #8D6E63 0%, #6D4C41 100%);
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .shelf-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .shelf-item {
+            width: 25px;
+            height: 25px;
+            border-radius: 3px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 收银台 */
+        .counter {
+            position: absolute;
+            bottom: 0;
+            right: 50px;
+            width: 100px;
+            height: 60px;
+            background: linear-gradient(180deg, #795548 0%, #5D4037 100%);
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .counter::before {
+            content: '🛒';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+        }
+
+        /* 顾客排队区 */
+        .queue-area {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 100px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 10px;
+            border: 3px dashed #795548;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .queue-label {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #795548;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        /* 顾客 */
+        .customer {
+            position: absolute;
+            width: 40px;
+            height: 60px;
+            background: linear-gradient(180deg, #FFCC80 0%, #FFB74D 100%);
+            border-radius: 20px 20px 10px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.5s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .customer.vip {
+            background: linear-gradient(180deg, #E1BEE7 0%, #CE93D8 100%);
+        }
+
+        .customer.urgent {
+            background: linear-gradient(180deg, #FFCCBC 0%, #FFAB91 100%);
+        }
+
+        .customer-name {
+            position: absolute;
+            top: -25px;
+            font-size: 12px;
+            white-space: nowrap;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        /* 排队线 */
+        .queue-line {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            height: 2px;
+            background: repeating-linear-gradient(
+                90deg,
+                #795548,
+                #795548 10px,
+                transparent 10px,
+                transparent 20px
+            );
+        }
+
+        /* 顶部状态栏 */
+        .stats-bar {
+            background: white;
+            padding: 15px;
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            border-bottom: 3px solid #e0e0e0;
         }
 
         .stat-box {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
             text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
         }
 
         .stat-label {
@@ -52,60 +247,57 @@
             color: #666;
         }
 
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .section {
-            margin-bottom: 20px;
+        /* 商品管理区 */
+        .products-section {
+            padding: 20px;
+            background: white;
         }
 
         .section-title {
             font-size: 18px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             color: #333;
-        }
-
-        .products {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            display: flex;
+            align-items: center;
             gap: 10px;
         }
 
-        .product {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.2s;
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
         }
 
-        .product:hover {
-            transform: scale(1.05);
+        .product-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .product.selected {
-            background: #e3f2fd;
-            border: 2px solid #2196f3;
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
         }
 
         .product-name {
+            font-size: 18px;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
 
         .product-stock {
-            font-size: 12px;
-            color: #666;
+            font-size: 14px;
+            opacity: 0.9;
         }
 
         .product-price {
-            font-size: 14px;
-            color: #2196f3;
-            margin-top: 5px;
+            font-size: 20px;
+            font-weight: bold;
+            margin: 10px 0;
         }
 
         .product-controls {
@@ -115,16 +307,22 @@
         }
 
         .btn {
-            padding: 5px 10px;
+            padding: 8px 15px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.2s;
         }
 
         .btn-up {
-            background: #4caf50;
+            background: #4CAF50;
             color: white;
+        }
+
+        .btn-up:hover {
+            background: #45a049;
         }
 
         .btn-down {
@@ -132,138 +330,198 @@
             color: white;
         }
 
+        .btn-down:hover {
+            background: #da190b;
+        }
+
         .btn-add {
-            background: #2196f3;
+            background: #2196F3;
             color: white;
             width: 100%;
+            margin-top: 10px;
         }
 
-        .customers {
+        .btn-add:hover {
+            background: #0b7dda;
+        }
+
+        /* 升级区 */
+        .upgrades-section {
+            padding: 20px;
             background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            min-height: 100px;
         }
 
-        .customer {
-            background: white;
-            padding: 10px;
-            margin-bottom: 5px;
-            border-radius: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .customer-name {
-            font-weight: bold;
-        }
-
-        .customer-waiting {
-            color: #f44336;
-        }
-
-        .customer-served {
-            color: #4caf50;
-        }
-
-        .upgrade-section {
+        .upgrades-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
         }
 
-        .upgrade-box {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
+        .upgrade-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             text-align: center;
         }
 
-        .upgrade-level {
-            font-size: 18px;
+        .upgrade-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .upgrade-name {
+            font-size: 16px;
             font-weight: bold;
             margin-bottom: 5px;
         }
 
-        .upgrade-cost {
-            font-size: 12px;
-            color: #666;
+        .upgrade-level {
+            font-size: 24px;
+            color: #667eea;
+            font-weight: bold;
             margin-bottom: 10px;
         }
 
-        .btn-upgrade {
-            background: #ff9800;
-            color: white;
-            width: 100%;
+        .upgrade-cost {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
         }
 
+        .btn-upgrade {
+            background: #FF9800;
+            color: white;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+        }
+
+        .btn-upgrade:hover {
+            background: #F57C00;
+        }
+
+        /* 消息提示 */
         .message {
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 1000;
         }
 
         .message.show {
             opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
+        .message.hide {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-20px);
+        }
+
+        /* 游戏说明 */
         .game-info {
             text-align: center;
+            padding: 20px;
             color: #666;
-            font-size: 12px;
-            margin-top: 20px;
+            font-size: 14px;
+            background: white;
+            border-top: 3px solid #e0e0e0;
+        }
+
+        /* 动画 */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .animate-bounce {
+            animation: bounce 0.5s ease;
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🏪 便利店小店主 - MVP</h1>
+    <div class="message" id="message">游戏开始！点击商品进行操作</div>
 
-        <div class="stats">
+    <div class="game-container">
+        <!-- 场景区域 -->
+        <div class="scene">
+            <div class="shop">
+                <div class="shop-window"></div>
+                <div class="shop-window"></div>
+                <div class="shelf-area">
+                    <div class="shelf" id="shelf1"></div>
+                    <div class="shelf" id="shelf2"></div>
+                    <div class="shelf" id="shelf3"></div>
+                </div>
+                <div class="counter"></div>
+            </div>
+            <div class="queue-area" id="queueArea">
+                <div class="queue-label">排队区</div>
+                <div class="queue-line"></div>
+            </div>
+        </div>
+
+        <!-- 状态栏 -->
+        <div class="stats-bar">
             <div class="stat-box">
-                <div class="stat-label">💰 金币</div>
-                <div class="stat-value" id="gold">0</div>
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="gold">100</div>
+                <div class="stat-label">金币</div>
             </div>
             <div class="stat-box">
-                <div class="stat-label">📦 营业额</div>
+                <div class="stat-icon">📦</div>
                 <div class="stat-value" id="revenue">0</div>
+                <div class="stat-label">营业额</div>
             </div>
             <div class="stat-box">
-                <div class="stat-label">⭐ 等级</div>
+                <div class="stat-icon">⭐</div>
                 <div class="stat-value" id="level">1</div>
+                <div class="stat-label">等级</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value" id="queueLength">0</div>
+                <div class="stat-label">排队人数</div>
             </div>
         </div>
 
-        <div class="section">
+        <!-- 商品管理 -->
+        <div class="products-section">
             <div class="section-title">🛒 商品管理</div>
-            <div class="products" id="products"></div>
+            <div class="products-grid" id="productsGrid"></div>
         </div>
 
-        <div class="section">
-            <div class="section-title">👥 顾客</div>
-            <div class="customers" id="customers"></div>
-        </div>
-
-        <div class="section">
+        <!-- 设施升级 -->
+        <div class="upgrades-section">
             <div class="section-title">⬆️ 设施升级</div>
-            <div class="upgrade-section" id="upgrades"></div>
+            <div class="upgrades-grid" id="upgradesGrid"></div>
         </div>
 
+        <!-- 游戏说明 -->
         <div class="game-info">
-            点击商品查看详情 → 点击 + 增加库存 → 点击 - 降低价格<br>
-            顾客会自动购买商品 → 使用金币升级设施
+            💡 提示：调整商品价格吸引顾客 → 进货补充库存 → 升级设施提升效率
         </div>
     </div>
-
-    <div class="message" id="message"></div>
 
     <script>
         // 游戏状态
@@ -272,60 +530,85 @@
             revenue: 0,
             level: 1,
             products: [
-                { id: 1, name: '饮料', basePrice: 10, stock: 10, cost: 5, profitRate: 0.3 },
-                { id: 2, name: '零食', basePrice: 8, stock: 10, cost: 4, profitRate: 0.25 },
-                { id: 3, name: '日用品', basePrice: 6, stock: 10, cost: 3, profitRate: 0.2 }
+                { id: 1, name: '饮料', icon: '🥤', basePrice: 10, stock: 10, cost: 5, profitRate: 0.3 },
+                { id: 2, name: '零食', icon: '🍪', basePrice: 8, stock: 10, cost: 4, profitRate: 0.25 },
+                { id: 3, name: '日用品', icon: '🧴', basePrice: 6, stock: 10, cost: 3, profitRate: 0.2 }
             ],
             customers: [],
+            queue: [],
             upgrades: {
                 register: 1,
                 shelf: 1
             }
         };
 
+        // 顾客类型
+        const customerTypes = [
+            { name: '普通顾客', icon: '😊', minPrice: 5, maxPrice: 20, waitTime: 5000, priority: 1 },
+            { name: 'VIP顾客', icon: '👑', minPrice: 20, maxPrice: 50, waitTime: 8000, priority: 3 },
+            { name: '急切顾客', icon: '😰', minPrice: 10, maxPrice: 30, waitTime: 3000, priority: 2 }
+        ];
+
+        // 初始化货架显示
+        function renderShelves() {
+            for (let i = 1; i <= 3; i++) {
+                const shelf = document.getElementById(`shelf${i}`);
+                shelf.innerHTML = '';
+                for (let j = 0; j < 4; j++) {
+                    const item = document.createElement('div');
+                    item.className = 'shelf-item';
+                    item.style.background = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                    item.style.color = 'white';
+                    item.textContent = ['🥤', '🍪', '🧴'][Math.floor(Math.random() * 3)];
+                    shelf.appendChild(item);
+                }
+            }
+        }
+
         // 初始化商品显示
         function renderProducts() {
-            const container = document.getElementById('products');
+            const container = document.getElementById('productsGrid');
             container.innerHTML = '';
 
             gameState.products.forEach(product => {
-                const div = document.createElement('div');
-                div.className = 'product';
-                div.innerHTML = `
-                    <div class="product-name">${product.name}</div>
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="product-name">${product.icon} ${product.name}</div>
                     <div class="product-stock">库存: ${product.stock}</div>
-                    <div class="product-price">价格: $${product.basePrice}</div>
+                    <div class="product-price">$${product.basePrice}</div>
                     <div class="product-controls">
-                        <button class="btn btn-down" onclick="changePrice(${product.id}, -1)">-</button>
-                        <button class="btn btn-up" onclick="changePrice(${product.id}, 1)">+</button>
+                        <button class="btn btn-down" onclick="changePrice(${product.id}, -1)">价格 ↓</button>
+                        <button class="btn btn-up" onclick="changePrice(${product.id}, 1)">价格 ↑</button>
                         <button class="btn btn-add" onclick="addStock(${product.id})">进货</button>
                     </div>
                 `;
-                container.appendChild(div);
+                container.appendChild(card);
             });
         }
 
         // 初始化设施升级显示
         function renderUpgrades() {
-            const container = document.getElementById('upgrades');
+            const container = document.getElementById('upgradesGrid');
             container.innerHTML = '';
 
             const upgrades = [
-                { id: 'register', name: '收银台', baseCost: 500, effect: '提升服务速度' },
-                { id: 'shelf', name: '货架', baseCost: 300, effect: '增加商品种类' }
+                { id: 'register', name: '收银台', icon: '🛒', baseCost: 500, effect: '提升服务速度' },
+                { id: 'shelf', name: '货架', icon: '📦', baseCost: 300, effect: '增加库存上限' }
             ];
 
             upgrades.forEach(upgrade => {
                 const cost = upgrade.baseCost * gameState.upgrades[upgrade.id];
-                const div = document.createElement('div');
-                div.className = 'upgrade-box';
-                div.innerHTML = `
+                const card = document.createElement('div');
+                card.className = 'upgrade-card';
+                card.innerHTML = `
+                    <div class="upgrade-icon">${upgrade.icon}</div>
+                    <div class="upgrade-name">${upgrade.name}</div>
                     <div class="upgrade-level">Lv.${gameState.upgrades[upgrade.id]}</div>
-                    <div>${upgrade.name}</div>
                     <div class="upgrade-cost">升级: $${cost}</div>
                     <button class="btn btn-upgrade" onclick="upgrade('${upgrade.id}')">升级</button>
                 `;
-                container.appendChild(div);
+                container.appendChild(card);
             });
         }
 
@@ -334,6 +617,7 @@
             document.getElementById('gold').textContent = gameState.gold;
             document.getElementById('revenue').textContent = gameState.revenue;
             document.getElementById('level').textContent = gameState.level;
+            document.getElementById('queueLength').textContent = gameState.queue.length;
         }
 
         // 更改价格
@@ -342,6 +626,7 @@
             if (product) {
                 product.basePrice = Math.max(1, product.basePrice + delta);
                 renderProducts();
+                showMessage(`${product.name} 价格: $${product.basePrice}`);
             }
         }
 
@@ -353,7 +638,7 @@
                 if (gameState.gold >= cost) {
                     gameState.gold -= cost;
                     product.stock += 5;
-                    showMessage(`进货成功！花费 $${cost}`);
+                    showMessage(`${product.name} 进货成功！花费 $${cost}`);
                     renderProducts();
                     updateStats();
                 } else {
@@ -371,7 +656,7 @@
             if (gameState.gold >= cost) {
                 gameState.gold -= cost;
                 gameState.upgrades[type]++;
-                showMessage('升级成功！');
+                showMessage(`升级成功！${type === 'register' ? '收银台' : '货架'} Lv.${gameState.upgrades[type]}`);
                 renderUpgrades();
                 updateStats();
             } else {
@@ -381,62 +666,81 @@
 
         // 生成顾客
         function generateCustomer() {
-            const customerTypes = [
-                { name: '普通顾客', minPrice: 5, maxPrice: 20, waitTime: 5000 },
-                { name: 'VIP顾客', minPrice: 20, maxPrice: 50, waitTime: 8000 },
-                { name: '急切顾客', minPrice: 10, maxPrice: 30, waitTime: 3000 }
-            ];
+            if (gameState.queue.length >= 8) {
+                showMessage('排队已满，请升级货架！');
+                return;
+            }
 
             const type = customerTypes[Math.floor(Math.random() * customerTypes.length)];
             const customer = {
                 id: Date.now(),
-                name: type.name,
-                minPrice: type.minPrice,
-                maxPrice: type.maxPrice,
-                waitTime: type.waitTime,
-                startTime: Date.now(),
-                satisfied: false
+                ...type,
+                x: 0,
+                y: 0,
+                state: 'waiting', // waiting, moving, served, leaving
+                timer: 0
             };
 
-            gameState.customers.push(customer);
-            renderCustomers();
+            gameState.queue.push(customer);
+            renderQueue();
+            showMessage(`${customer.name} 加入排队！`);
         }
 
-        // 渲染顾客
-        function renderCustomers() {
-            const container = document.getElementById('customers');
-            container.innerHTML = '';
+        // 渲染排队
+        function renderQueue() {
+            const queueArea = document.getElementById('queueArea');
+            // 清除旧的顾客元素（保留排队线和标签）
+            const oldCustomers = queueArea.querySelectorAll('.customer');
+            oldCustomers.forEach(c => c.remove());
 
-            gameState.customers.forEach(customer => {
-                const waitTime = Date.now() - customer.startTime;
-                const isWaiting = waitTime < customer.waitTime;
-
-                const div = document.createElement('div');
-                div.className = `customer ${isWaiting ? 'customer-waiting' : 'customer-served'}`;
-                div.innerHTML = `
-                    <span class="customer-name">${customer.name}</span>
-                    <span>${isWaiting ? `等待中... ${Math.floor((customer.waitTime - waitTime) / 1000)}s` : '已购买'}</span>
+            // 渲染新的顾客
+            gameState.queue.forEach((customer, index) => {
+                const customerEl = document.createElement('div');
+                customerEl.className = `customer ${customer.name === 'VIP顾客' ? 'vip' : customer.name === '急切顾客' ? 'urgent' : ''}`;
+                customerEl.innerHTML = `
+                    <div class="customer-name">${customer.icon} ${customer.name}</div>
+                    ${customer.state === 'waiting' ? '<div class="customer-waiting">⏳</div>' : ''}
                 `;
-                container.appendChild(div);
-            });
-
-            // 清理已完成的顾客
-            gameState.customers = gameState.customers.filter(c => {
-                return Date.now() - c.startTime < c.waitTime + 3000;
+                customerEl.style.left = `${10 + index * 35}px`;
+                customerEl.style.top = `${50 + (customer.state === 'served' ? 30 : 0)}px`;
+                customerEl.style.opacity = customer.state === 'served' ? '0.5' : '1';
+                queueArea.appendChild(customerEl);
             });
         }
 
-        // 顾客购买逻辑
-        function customerBuy() {
-            const customer = gameState.customers.find(c => {
-                return !c.satisfied && Date.now() - c.startTime < c.waitTime;
+        // 顾客行为逻辑
+        function customerBehavior() {
+            // 检查顾客是否在等待
+            gameState.queue.forEach(customer => {
+                if (customer.state === 'waiting') {
+                    customer.timer += 1000;
+                    if (customer.timer >= customer.waitTime) {
+                        customer.state = 'leaving';
+                        showMessage(`${customer.name} 等太久离开了！`);
+                        renderQueue();
+                    }
+                }
             });
 
-            if (!customer) return;
+            // 检查是否有顾客需要服务
+            const servedCustomer = gameState.queue.find(c => c.state === 'waiting');
+            if (servedCustomer) {
+                servedCustomer.state = 'served';
+                serveCustomer(servedCustomer);
+                renderQueue();
+            }
+        }
 
-            // 顾客选择购买
+        // 服务顾客
+        function serveCustomer(customer) {
+            // 顾客选择商品
             const products = gameState.products.filter(p => p.stock > 0);
-            if (products.length === 0) return;
+            if (products.length === 0) {
+                customer.state = 'leaving';
+                showMessage(`${customer.name} 没有商品可买，离开了！`);
+                renderQueue();
+                return;
+            }
 
             const product = products[Math.floor(Math.random() * products.length)];
             const price = product.basePrice;
@@ -447,17 +751,24 @@
                 const revenue = price;
                 gameState.gold += revenue;
                 gameState.revenue += revenue;
-                customer.satisfied = true;
+                showMessage(`${customer.name} 购买了 ${product.icon} ${product.name}，获得 $${revenue}`);
+
+                // 从队列中移除
+                gameState.queue = gameState.queue.filter(c => c.id !== customer.id);
 
                 // 检查是否升级
                 if (gameState.revenue >= gameState.level * 1000) {
                     gameState.level++;
-                    showMessage(`升级！当前等级: ${gameState.level}`);
+                    showMessage(`🎉 升级！当前等级: ${gameState.level}`);
                 }
 
-                renderCustomers();
+                renderQueue();
                 renderProducts();
                 updateStats();
+            } else {
+                customer.state = 'leaving';
+                showMessage(`${customer.name} 觉得价格不合适，离开了！`);
+                renderQueue();
             }
         }
 
@@ -466,27 +777,30 @@
             const message = document.getElementById('message');
             message.textContent = text;
             message.classList.add('show');
+            message.classList.remove('hide');
+
             setTimeout(() => {
                 message.classList.remove('show');
+                message.classList.add('hide');
             }, 2000);
         }
 
         // 游戏主循环
         function gameLoop() {
-            customerBuy();
-            renderCustomers();
+            customerBehavior();
             updateStats();
         }
 
         // 初始化
         function init() {
+            renderShelves();
             renderProducts();
             renderUpgrades();
             updateStats();
 
             // 定时生成顾客
             setInterval(() => {
-                if (gameState.customers.length < 5) {
+                if (gameState.queue.length < 8 && Math.random() < 0.5) {
                     generateCustomer();
                 }
             }, 5000);
@@ -494,7 +808,7 @@
             // 游戏循环
             setInterval(gameLoop, 1000);
 
-            showMessage('游戏开始！点击商品进行操作');
+            showMessage('游戏开始！调整价格、进货、升级设施');
         }
 
         // 启动游戏
