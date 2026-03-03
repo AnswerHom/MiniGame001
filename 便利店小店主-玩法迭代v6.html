@@ -1,0 +1,2422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>便利店小店主 - v6 增强美术版</title>
+    <style>
+        /* ============ 色彩系统 ============ */
+        :root {
+            --primary: #FF7F50;
+            --primary-light: #FFA07A;
+            --primary-dark: #FF6347;
+            --secondary: #4ECDC4;
+            --secondary-light: #7EDDD6;
+            --secondary-dark: #3DBDB4;
+            --background: #FFF8F0;
+            --surface: #FFFFFF;
+            --text: #4A4A4A;
+            --text-light: #8A8A8A;
+            --accent: #FFD93D;
+            --success: #6BCB77;
+            --warning: #FFB347;
+            --error: #FF6B6B;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .game-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--background);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        /* ============ 顶部状态栏 ============ */
+        .stats-bar {
+            background: white;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            border-bottom: 3px solid #e0e0e0;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            transition: color 0.3s;
+        }
+
+        .stat-value.animate {
+            animation: valueChange 0.3s ease;
+        }
+
+        @keyframes valueChange {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); color: var(--primary); }
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* ============ 目标进度条 ============ */
+        .goal-section {
+            padding: 15px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+
+        .goal-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .goal-bar {
+            height: 20px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .goal-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent) 0%, #FFE082 100%);
+            transition: width 0.5s ease;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .goal-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            100% { left: 100%; }
+        }
+
+        .goal-text {
+            text-align: center;
+            font-size: 14px;
+            color: white;
+            margin-top: 5px;
+        }
+
+        /* ============ 增强场景区域 - v6 ============ */
+        .scene {
+            position: relative;
+            height: 500px;
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F7FA 30%, #FFF8E1 70%, #8BC34A 100%);
+            overflow: hidden;
+        }
+
+        /* 地板 - 浅色瓷砖 */
+        .floor {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: 
+                repeating-linear-gradient(90deg, #F5F5F5 0px, #F5F5F5 48px, #E0E0E0 48px, #E0E0E0 50px),
+                repeating-linear-gradient(0deg, #F5F5F5 0px, #F5F5F5 48px, #E0E0E0 48px, #E0E0E0 50px);
+            background-color: #FAFAFA;
+        }
+
+        /* 防滑垫 */
+        .floor-mat {
+            position: absolute;
+            bottom: 20px;
+            left: 50px;
+            width: 80px;
+            height: 40px;
+            background: linear-gradient(135deg, #795548 0%, #5D4037 100%);
+            border-radius: 5px;
+            border: 2px solid #4E342E;
+        }
+
+        /* 墙面 */
+        .wall {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 350px;
+            background: linear-gradient(180deg, #FFFDE7 0%, #FFF8E1 100%);
+        }
+
+        /* 腰线装饰 */
+        .wall::after {
+            content: '';
+            position: absolute;
+            top: 250px;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #FFE082 0%, #FFD54F 50%, #FFE082 100%);
+        }
+
+        /* 店名招牌 */
+        .shop-sign {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 10px 40px;
+            border-radius: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 5px 20px rgba(255, 127, 80, 0.4);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+
+        /* ============ 入口区域 ============ */
+        .entrance {
+            position: absolute;
+            bottom: 0;
+            left: 30px;
+            width: 80px;
+            height: 120px;
+        }
+
+        .door {
+            position: absolute;
+            bottom: 0;
+            width: 35px;
+            height: 100px;
+            background: linear-gradient(180deg, #81D4FA 0%, #4FC3F7 100%);
+            border: 3px solid #0288D1;
+            border-radius: 5px 5px 0 0;
+            transition: transform 0.5s ease;
+        }
+
+        .door.left {
+            left: 0;
+            transform-origin: left center;
+        }
+
+        .door.right {
+            right: 0;
+            transform-origin: right center;
+        }
+
+        .door.open {
+            transform: translateX(-25px);
+        }
+
+        .door-right.open {
+            transform: translateX(25px);
+        }
+
+        .door-frame {
+            position: absolute;
+            bottom: 0;
+            left: -5px;
+            width: 90px;
+            height: 110px;
+            border: 5px solid #5D4037;
+            border-radius: 5px 5px 0 0;
+            background: transparent;
+        }
+
+        .welcome-sign {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #E53935 0%, #C62828 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+            box-shadow: 0 3px 10px rgba(229, 57, 53, 0.4);
+            animation: signGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes signGlow {
+            0%, 100% { box-shadow: 0 3px 10px rgba(229, 57, 53, 0.4); }
+            50% { box-shadow: 0 3px 20px rgba(229, 57, 53, 0.8); }
+        }
+
+        /* 入口花篮 */
+        .flower-basket {
+            position: absolute;
+            bottom: 110px;
+            font-size: 28px;
+            animation: sway 3s ease-in-out infinite;
+        }
+
+        .flower-basket.left { left: 20px; }
+        .flower-basket.right { right: 920px; }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+
+        /* ============ 货架        .sh区 ============ */
+elves-area {
+            position: absolute;
+            bottom: 80px;
+            left: 150px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .shelf {
+            width: 140px;
+            height: 180px;
+            background: linear-gradient(180deg, #8D6E63 0%, #6D4C41 100%);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        /* 货架灯带 */
+        .shelf::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--secondary) 0%, var(--secondary-light) 50%, var(--secondary) 100%);
+            border-radius: 8px 8px 0 0;
+            animation: lightGlow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes lightGlow {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .shelf-level {
+            flex: 1;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 5px;
+            border-bottom: 2px solid #5D4037;
+            padding-bottom: 5px;
+        }
+
+        .shelf-item {
+            width: 25px;
+            height: 30px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .shelf-item:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .shelf-item::after {
+            content: attr(data-price);
+            position: absolute;
+            top: -15px;
+            font-size: 10px;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* 促销立牌 */
+        .promo-sign {
+            position: absolute;
+            right: -20px;
+            top: 20px;
+            background: linear-gradient(135deg, #FF6B6B 0%, #EE5A5A 100%);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 10px;
+            font-weight: bold;
+            transform: rotate(10deg);
+            animation: promoBounce 1s ease-in-out infinite;
+        }
+
+        @keyframes promoBounce {
+            0%, 100% { transform: rotate(10deg) translateY(0); }
+            50% { transform: rotate(10deg) translateY(-3px); }
+        }
+
+        /* 货架端头 */
+        .shelf-end {
+            position: absolute;
+            right: -30px;
+            width: 25px;
+            height: 100%;
+            background: linear-gradient(180deg, #FF9800 0%, #F57C00 100%);
+            border-radius: 0 8px 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ============ 收银台 ============ */
+        .register-area {
+            position: absolute;
+            bottom: 0;
+            right: 80px;
+            width: 150px;
+            height: 100px;
+        }
+
+        .register {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 70px;
+            background: linear-gradient(180deg, #5D4037 0%, #4E342E 100%);
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        /* 大理石台面 */
+        .register::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 15px;
+            background: linear-gradient(180deg, #424242 0%, #212121 100%);
+            border-radius: 10px 10px 0 0;
+        }
+
+        /* POS机 */
+        .pos-machine {
+            position: absolute;
+            top: -40px;
+            left: 20px;
+            width: 50px;
+            height: 35px;
+            background: linear-gradient(180deg, #263238 0%, #37474F 100%);
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pos-screen {
+            width: 30px;
+            height: 20px;
+            background: #4CAF50;
+            border-radius: 2px;
+            animation: screenFlicker 3s ease-in-out infinite;
+        }
+
+        @keyframes screenFlicker {
+            0%, 95%, 100% { background: #4CAF50; }
+            96% { background: #8BC34A; }
+        }
+
+        /* 收银柜灯光 */
+        .register-light {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: cashLight 1s ease-in-out infinite;
+            box-shadow: 0 0 20px var(--accent);
+        }
+
+        @keyframes cashLight {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* 杂志架 */
+        .magazine-rack {
+            position: absolute;
+            top: -20px;
+            right: 10px;
+            width: 30px;
+            height: 40px;
+            background: linear-gradient(180deg, #78909C 0%, #546E7A 100%);
+            border-radius: 3px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            padding: 3px;
+        }
+
+        .magazine {
+            width: 20px;
+            height: 8px;
+            background: #EF5350;
+            border-radius: 1px;
+        }
+
+        .magazine:nth-child(2) { background: #42A5F5; }
+        .magazine:nth-child(3) { background: #66BB6A; }
+
+        /* 1米线 */
+        .queue-line-marker {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: repeating-linear-gradient(90deg, var(--warning) 0px, var(--warning) 10px, transparent 10px, transparent 20px);
+        }
+
+        /* ============ 出口区域 ============ */
+        .exit-area {
+            position: absolute;
+            bottom: 0;
+            left: 30px;
+            width: 80px;
+            height: 60px;
+        }
+
+        .exit-sign {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #00BCD4 0%, #00ACC1 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(0, 188, 212, 0.4);
+        }
+
+        .exit-sign::after {
+            content: 'EXIT';
+            font-size: 10px;
+            display: block;
+            text-align: center;
+        }
+
+        /* 霓虹效果 */
+        .neon-sign {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #E91E63;
+            font-size: 20px;
+            text-shadow: 
+                0 0 5px #E91E63,
+                0 0 10px #E91E63,
+                0 0 20px #E91E63;
+            animation: neonFlicker 2s ease-in-out infinite;
+        }
+
+        @keyframes neonFlicker {
+            0%, 100% { opacity: 1; }
+            92% { opacity: 1; }
+            93% { opacity: 0.3; }
+            94% { opacity: 1; }
+            96% { opacity: 0.5; }
+            97% { opacity: 1; }
+        }
+
+        /* 回收箱 */
+        .recycle-bin {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 24px;
+        }
+
+        /* ============ 店员区 ============ */
+        .staff-area {
+            position: absolute;
+            bottom: 80px;
+            right: 250px;
+            width: 60px;
+            height: 90px;
+        }
+
+        /* 店员角色 */
+        .staff {
+            position: absolute;
+            bottom: 0;
+            width: 45px;
+            height: 85px;
+            transition: all 0.3s ease;
+        }
+
+        .staff-body {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 35px;
+            height: 55px;
+            background: linear-gradient(180deg, #1E88E5 0%, #1565C0 100%);
+            border-radius: 10px 10px 5px 5px;
+        }
+
+        .staff-head {
+            position: absolute;
+            bottom: 55px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(180deg, #FFCC80 0%, #FFB74D 100%);
+            border-radius: 50%;
+        }
+
+        .staff-hat {
+            position: absolute;
+            bottom: 78px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 12px;
+            background: linear-gradient(180deg, #424242 0%, #212121 100%);
+            border-radius: 5px 5px 0 0;
+        }
+
+        .staff-hat::before {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: -5px;
+            width: 40px;
+            height: 5px;
+            background: #424242;
+            border-radius: 2px;
+        }
+
+        /* 店员待机动画 */
+        .staff.idle {
+            animation: staffIdle 2s ease-in-out infinite;
+        }
+
+        @keyframes staffIdle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .staff-serving {
+            animation: staffServe 0.5s ease-in-out;
+        }
+
+        @keyframes staffServe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* ============ 顾客角色 - v6 增强 ============ */
+        .customer {
+            position: absolute;
+            width: 40px;
+            height: 70px;
+            transition: left 0.1s linear, bottom 0.1s linear;
+            z-index: 100;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3));
+        }
+
+        /* 顾客阴影 */
+        .customer::before {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 8px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 50%;
+            filter: blur(2px);
+        }
+
+        .customer-body {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 28px;
+            height: 45px;
+            border-radius: 12px 12px 8px 8px;
+            transition: transform 0.1s;
+        }
+
+        .customer-head {
+            position: absolute;
+            bottom: 52px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: linear-gradient(180deg, #FFCC80 0%, #FFB74D 100%);
+        }
+
+        /* 顾客表情 */
+        .customer-face {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 10px;
+        }
+
+        .customer-eyes {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .customer-eye {
+            width: 4px;
+            height: 4px;
+            background: #333;
+            border-radius: 50%;
+        }
+
+        .customer-mouth {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 3px;
+            border-radius: 0 0 3px 3px;
+            background: #333;
+        }
+
+        /* 顾客状态表情 */
+        .customer.happy .customer-mouth {
+            height: 4px;
+            border-radius: 0 0 4px 4px;
+            background: #E91E63;
+        }
+
+        .customer.sad .customer-mouth {
+            border-radius: 3px 3px 0 0;
+            bottom: 2px;
+        }
+
+        .customer.angry .customer-eye {
+            height: 2px;
+            background: #333;
+            transform: rotate(10deg);
+        }
+
+        .customer.angry .customer-eye:last-child {
+            transform: rotate(-10deg);
+        }
+
+        .customer.impatient .customer-face::after {
+            content: '💧';
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            font-size: 8px;
+            animation: sweatDrop 1s ease-in-out infinite;
+        }
+
+        @keyframes sweatDrop {
+            0%, 100% { transform: translateY(0); opacity: 1; }
+            50% { transform: translateY(3px); opacity: 0.5; }
+        }
+
+        /* VIP 顾客 */
+        .customer.vip .customer-body::after {
+            content: '⭐';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            animation: vipGlow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes vipGlow {
+            0%, 100% { filter: drop-shadow(0 0 3px gold); }
+            50% { filter: drop-shadow(0 0 8px gold); }
+        }
+
+        .customer.vip .customer-body {
+            background: linear-gradient(180deg, #E1BEE7 0%, #CE93D8 100%);
+        }
+
+        /* 急切顾客 */
+        .customer.urgent {
+            animation: urgentPulse 0.5s ease-in-out infinite;
+        }
+
+        @keyframes urgentPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .customer.urgent .customer-body {
+            background: linear-gradient(180deg, #FFCCBC 0%, #FFAB91 100%);
+        }
+
+        /* ============ 顾客动作动画 ============ */
+        /* 行走动画 */
+        .customer.walking .customer-body {
+            animation: walkBody 0.3s ease-in-out infinite;
+        }
+
+        @keyframes walkBody {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-3px); }
+        }
+
+        .customer.walking .customer-head {
+            animation: walkHead 0.3s ease-in-out infinite;
+        }
+
+        @keyframes walkHead {
+            0%, 100% { transform: translateX(-50%) rotate(-3deg); }
+            50% { transform: translateX(-50%) rotate(3deg); }
+        }
+
+        /* 购物动画 */
+        .customer.shopping .customer-body {
+            animation: shopBody 0.5s ease-in-out;
+        }
+
+        @keyframes shopBody {
+            0%, 100% { transform: translateX(-50%) rotate(0); }
+            25% { transform: translateX(-50%) rotate(-5deg); }
+            75% { transform: translateX(-50%) rotate(5deg); }
+        }
+
+        /* 付款动画 */
+        .customer.paying .customer-body {
+            animation: payBody 0.3s ease-in-out;
+        }
+
+        @keyframes payBody {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.1); }
+        }
+
+        /* 等待动画 */
+        .customer.waiting .customer-body {
+            animation: waitBody 2s ease-in-out infinite;
+        }
+
+        @keyframes waitBody {
+            0%, 100% { transform: translateX(-50%) rotate(0); }
+            25% { transform: translateX(-50%) rotate(-2deg); }
+            75% { transform: translateX(-50%) rotate(2deg); }
+        }
+
+        .customer.waiting .customer-head {
+            animation: waitHead 3s ease-in-out infinite;
+        }
+
+        @keyframes waitHead {
+            0%, 40%, 60%, 100% { transform: translateX(-50%) rotate(0); }
+            50% { transform: translateX(-50%) rotate(15deg); }
+        }
+
+        /* 离开动画 */
+        .customer.leaving {
+            animation: leaveFade 0.5s ease-out forwards;
+        }
+
+        @keyframes leaveFade {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.5); }
+        }
+
+        /* 购物篮 */
+        .customer-basket {
+            position: absolute;
+            bottom: 5px;
+            right: -15px;
+            width: 20px;
+            height: 15px;
+            background: linear-gradient(180deg, #8D6E63 0%, #6D4C41 100%);
+            border-radius: 3px;
+            display: none;
+        }
+
+        .customer.has-item .customer-basket {
+            display: block;
+        }
+
+        .basket-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 14px;
+            height: 14px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            font-size: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ============ 粒子效果系统 ============ */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            border-radius: 50%;
+            z-index: 1000;
+        }
+
+        @keyframes particleFade {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0); }
+        }
+
+        /* 欢迎粒子 */
+        .particle.welcome {
+            animation: particleFade 1.5s ease-out forwards;
+        }
+
+        /* 购买粒子 */
+        .particle.purchase {
+            animation: particleRise 1s ease-out forwards;
+        }
+
+        @keyframes particleRise {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-50px) scale(0); }
+        }
+
+        /* 成功粒子 */
+        .particle.success {
+            animation: particleBurst 0.8s ease-out forwards;
+        }
+
+        @keyframes particleBurst {
+            0% { opacity: 1; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1.5); }
+            100% { opacity: 0; transform: scale(2); }
+        }
+
+        /* 付款特效 */
+        .payment-effect {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            animation: paymentFlash 0.5s ease-out forwards;
+            pointer-events: none;
+            z-index: 500;
+        }
+
+        @keyframes paymentFlash {
+            0% { opacity: 1; transform: scale(0.5); }
+            100% { opacity: 0; transform: scale(2); }
+        }
+
+        /* ============ 灯光效果 ============ */
+        .light-cone {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-bottom: 80px solid rgba(255, 255, 200, 0.1);
+            pointer-events: none;
+        }
+
+        /* ============ 装饰元素 ============ */
+        .decoration {
+            position: absolute;
+            z-index: 5;
+        }
+
+        /* 墙面时钟 */
+        .wall-clock {
+            position: absolute;
+            top: 80px;
+            left: 150px;
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            border: 3px solid #5D4037;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        .clock-face {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+        }
+
+        .clock-hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            background: #333;
+        }
+
+        .clock-hand.hour {
+            width: 2px;
+            height: 12px;
+            transform: translateX(-50%) rotate(90deg);
+        }
+
+        .clock-hand.minute {
+            width: 1px;
+            height: 16px;
+            transform: translateX(-50%) rotate(0deg);
+        }
+
+        .clock-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 4px;
+            height: 4px;
+            background: #333;
+            border-radius: 50%;
+        }
+
+        /* 电视屏 */
+        .tv-screen {
+            position: absolute;
+            top: 80px;
+            right: 150px;
+            width: 80px;
+            height: 50px;
+            background: linear-gradient(135deg, #1a237e 0%, #311b92 100%);
+            border: 3px solid #424242;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .tv-content {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #1976D2 0%, #64B5F6 100%);
+            animation: tvFlicker 4s ease-in-out infinite;
+        }
+
+        @keyframes tvFlicker {
+            0%, 100% { opacity: 0.9; }
+            50% { opacity: 1; }
+        }
+
+        /* 绿植 */
+        .plant {
+            position: absolute;
+            bottom: 70px;
+            right: 30px;
+            font-size: 35px;
+            animation: plantSway 4s ease-in-out infinite;
+        }
+
+        @keyframes plantSway {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+
+        /* ============ 升级建议区 ============ */
+        .upgrade-section {
+            padding: 15px;
+            background: #FFF3E0;
+            border-left: 4px solid #FF9800;
+        }
+
+        .upgrade-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #E65100;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .upgrade-items {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .upgrade-item {
+            background: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .upgrade-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+
+        .upgrade-item.affordable {
+            border-color: var(--success);
+        }
+
+        .upgrade-item.affordable:hover {
+            border-color: #4CAF50;
+        }
+
+        .upgrade-icon {
+            font-size: 24px;
+        }
+
+        .upgrade-info {
+            flex: 1;
+        }
+
+        .upgrade-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .upgrade-cost {
+            font-size: 12px;
+            color: var(--primary);
+        }
+
+        /* ============ 操作面板 ============ */
+        .control-panel {
+            background: white;
+            padding: 20px;
+            border-top: 3px solid #e0e0e0;
+        }
+
+        .panel-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .product-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-color: var(--secondary);
+        }
+
+        .product-card.selected {
+            border-color: var(--primary);
+            background: #FFF8F0;
+        }
+
+        .product-icon {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .product-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .product-price {
+            text-align: center;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .product-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-control {
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        .btn-control:active {
+            transform: scale(0.95);
+        }
+
+        .btn-minus {
+            background: #FF6B6B;
+            color: white;
+        }
+
+        .btn-plus {
+            background: #4ECDC4;
+            color: white;
+        }
+
+        .product-stock {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        /* ============ 帮助按钮 ============ */
+        .help-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(255, 127, 80, 0.4);
+            z-index: 9999;
+            transition: transform 0.2s;
+        }
+
+        .help-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* ============ 新手引导 ============ */
+        .tutorial-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .tutorial-overlay.show {
+            display: flex;
+        }
+
+        .tutorial-dialog {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .tutorial-dialog h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .tutorial-dialog p {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .tutorial-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+
+        .btn-tutorial {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .btn-skip {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .btn-next:hover, .btn-skip:hover {
+            transform: translateY(-2px);
+        }
+
+        .tutorial-highlight {
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+            border-radius: 5px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { outline-color: var(--primary); }
+            50% { outline-color: var(--primary-dark); }
+        }
+
+        /* ============ 金币动画 ============ */
+        .coin-animation {
+            position: absolute;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 1000;
+            animation: coinFall 1s ease-out forwards;
+        }
+
+        @keyframes coinFall {
+            0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+            100% { opacity: 0; transform: translateY(100px) rotate(360deg); }
+        }
+
+        /* ============ 屏幕闪烁效果 ============ */
+        .screen-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 9998;
+            animation: flash 0.3s ease-out forwards;
+        }
+
+        @keyframes flash {
+            0% { background: var(--accent); opacity: 0.3; }
+            100% { background: transparent; opacity: 0; }
+        }
+
+        /* ============ 响应式 ============ */
+        @media (max-width: 768px) {
+            .stats-bar {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .scene {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <!-- 顶部状态栏 -->
+        <div class="stats-bar">
+            <div class="stat-box">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="gold">100</div>
+                <div class="stat-label">金币</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value" id="customers">0</div>
+                <div class="stat-label">顾客</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">🛒</div>
+                <div class="stat-value" id="sales">0</div>
+                <div class="stat-label">销量</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-value" id="reputation">0</div>
+                <div class="stat-label">口碑</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value" id="day">1</div>
+                <div class="stat-label">天数</div>
+            </div>
+        </div>
+
+        <!-- 目标进度条 -->
+        <div class="goal-section">
+            <div class="goal-title">
+                <span>🎯</span>
+                <span id="goal-name">今日目标：赚取 100 金币</span>
+            </div>
+            <div class="goal-bar">
+                <div class="goal-fill" id="goal-fill" style="width: 0%"></div>
+            </div>
+            <div class="goal-text" id="goal-text">0 / 100 金币</div>
+        </div>
+
+        <!-- 游戏场景 - v6 增强版 -->
+        <div class="scene" id="scene">
+            <!-- 墙面 -->
+            <div class="wall"></div>
+            
+            <!-- 店名招牌 -->
+            <div class="shop-sign">🏪 便利店小店主</div>
+            
+            <!-- 装饰：时钟 -->
+            <div class="wall-clock">
+                <div class="clock-face">
+                    <div class="clock-hand hour"></div>
+                    <div class="clock-hand minute"></div>
+                    <div class="clock-center"></div>
+                </div>
+            </div>
+            
+            <!-- 装饰：电视屏 -->
+            <div class="tv-screen">
+                <div class="tv-content"></div>
+            </div>
+            
+            <!-- 地板 -->
+            <div class="floor"></div>
+            <div class="floor-mat"></div>
+            
+            <!-- 入口区域 -->
+            <div class="entrance" id="entrance">
+                <div class="door-frame"></div>
+                <div class="door left" id="door-left"></div>
+                <div class="door right" id="door-right"></div>
+                <div class="welcome-sign">欢迎光临</div>
+                <div class="flower-basket left">💐</div>
+            </div>
+            
+            <!-- 货架区 -->
+            <div class="shelves-area" id="shelves-area">
+                <!-- 货架1 - 饮料 -->
+                <div class="shelf" id="shelf-0">
+                    <div class="shelf-level">
+                        <div class="shelf-item" style="background: #E53935;" data-price="5">🥤</div>
+                        <div class="shelf-item" style="background: #43A047;" data-price="5">🥤</div>
+                    </div>
+                    <div class="shelf-level">
+                        <div class="shelf-item" style="background: #1E88E5;" data-price="5">🥤</div>
+                        <div class="shelf-item" style="background: #FB8C00;" data-price="5">🥤</div>
+                    </div>
+                    <div class="shelf-level">
+                        <div class="shelf-item" style="background: #8E24AA;" data-price="5">🥤</div>
+                        <div class="shelf-item" style="background: #00ACC1;" data-price="5">🥤</div>
+                    </div>
+                    <div class="promo-sign">热销</div>
+                </div>
+                
+                <!-- 货架2 - 零食 -->
+                <div class="shelf" id="shelf-1">
+                    <div class="shelf-level">
+                        <div class="shelf-item" style="background: #FFB300;" data-price="8">🍪</div>
+                        <div class="shelf-item" style="background: #8D6E63;" data-price="8">🍪</div>
+                    </div>
+                    <div class="shelf-level">
+                        <div class="shelf-item" style="background: #7CB342;" data-price="8">🍬</div>
+                        <div class="shelf-item" style="background: #EC407A;" data-price="8">🍬</div>
+                    </div>
+                    <div class="shelf-level">
+                        <div class="shelf-item" style="background: #5D4037;" data-price="10">🍫</div>
+                        <div class="shelf-item" style="background: #3E2723;" data-price="10">🍫</div>
+                    </div>
+                </div>
+                
+                <!-- 货架3 - 日用品 -->
+                <div class="shelf" id="shelf-2">
+                    <div class="shelf-level">
+                        <div class="shelf-item" style="background: #90CAF9;" data-price="15">🧻</div>
+                    </div>
+                    <div class="shelf-level">
+                        <div class="shelf-item" style="background: #F48FB1;" data-price="20">🧴</div>
+                    </div>
+                    <div class="shelf-level">
+                        <div class="shelf-item" style="background: #A5D6A7;" data-price="12">🪥</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 收银台 -->
+            <div class="register-area" id="register-area">
+                <div class="register">
+                    <div class="pos-machine">
+                        <div class="pos-screen"></div>
+                    </div>
+                    <div class="register-light"></div>
+                    <div class="magazine-rack">
+                        <div class="magazine"></div>
+                        <div class="magazine"></div>
+                        <div class="magazine"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 排队线 -->
+            <div class="queue-line-marker"></div>
+            
+            <!-- 出口区域 -->
+            <div class="exit-area" id="exit-area">
+                <div class="exit-sign">出口</div>
+                <div class="neon-sign">✨</div>
+                <div class="recycle-bin">♻️</div>
+            </div>
+            
+            <!-- 店员区 -->
+            <div class="staff-area">
+                <div class="staff idle" id="staff">
+                    <div class="staff-hat"></div>
+                    <div class="staff-head"></div>
+                    <div class="staff-body"></div>
+                </div>
+            </div>
+            
+            <!-- 绿植装饰 -->
+            <div class="plant">🪴</div>
+            
+            <!-- 顾客容器 -->
+            <div id="customers-container"></div>
+        </div>
+
+        <!-- 升级建议区 -->
+        <div class="upgrade-section">
+            <div class="upgrade-title">
+                <span>⬆️</span>
+                <span>升级设施</span>
+            </div>
+            <div class="upgrade-items" id="upgrade-items">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+
+        <!-- 操作面板 -->
+        <div class="control-panel">
+            <div class="panel-title">📦 商品管理</div>
+            <div class="products-grid" id="products-grid">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 帮助按钮 -->
+    <button class="help-btn" id="help-btn">❓</button>
+
+    <!-- 新手引导浮层 -->
+    <div class="tutorial-overlay" id="tutorial-overlay">
+        <div class="tutorial-dialog">
+            <h3 id="tutorial-title">欢迎来到便利店！</h3>
+            <p id="tutorial-content">这是你的第一家便利店。点击商品可以调整价格和库存。</p>
+            <div class="tutorial-buttons">
+                <button class="btn-tutorial btn-skip" id="btn-skip">跳过</button>
+                <button class="btn-tutorial btn-next" id="btn-next">下一步</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============ 游戏配置 - v6 ============
+        const GameConfig = {
+            // 移动速度配置
+            MOVEMENT_SPEED: {
+                WALKING: 80,      // 正常行走
+                BROWSING: 40,     // 逛街浏览
+                RUSHING: 120,     // 赶路/离开
+                QUEUING: 0,       // 排队静止
+            },
+            
+            // 路径节点坐标
+            PATH_NODES: {
+                SPAWN: { x: -50, y: 380 },
+                ENTRANCE: { x: 50, y: 380 },
+                SHELF_AREA_START: { x: 150, y: 350 },
+                SHELF_AREA_END: { x: 450, y: 350 },
+                PRODUCT_SPOT: { x: 300, y: 280 },
+                QUEUE_START: { x: 550, y: 380 },
+                REGISTER: { x: 700, y: 380 },
+                EXIT_START: { x: 500, y: 450 },
+                EXIT: { x: -50, y: 450 },
+            },
+            
+            // 顾客状态
+            CUSTOMER_STATE: {
+                SPAWNING: 'spawning',
+                ENTERING: 'entering',
+                BROWSING: 'browsing',
+                SHOPPING: 'shopping',
+                WALKING_TO_REGISTER: 'walking_to_register',
+                QUEUING: 'queuing',
+                PAYING: 'paying',
+                WALKING_TO_EXIT: 'walking_to_exit',
+                LEAVING: 'leaving',
+            },
+            
+            // 粒子效果配置
+            PARTICLE_CONFIG: {
+                welcome: {
+                    colors: ['#FFD700', '#FFA500', '#FF6347'],
+                    count: 15,
+                    size: [3, 8],
+                },
+                purchase: {
+                    colors: ['#FFD700', '#FF69B4', '#00CED1'],
+                    count: 20,
+                    size: [2, 6],
+                },
+                success: {
+                    colors: ['#FFD700', '#FFE082', '#FFEB3B'],
+                    count: 25,
+                    size: [3, 10],
+                },
+            },
+        };
+
+        // ============ 游戏状态 ============
+        const GameState = {
+            gold: 100,
+            customers: 0,
+            sales: 0,
+            reputation: 0,
+            day: 1,
+            dayGoal: 100,
+            dayProgress: 0,
+            
+            // 设施等级
+            facilities: {
+                counter: 1,
+                shelf: 1,
+                decoration: 1,
+            },
+            
+            // 商品数据
+            products: [
+                { id: 0, name: '饮料', icon: '🥤', price: 5, stock: 20, category: 'drink' },
+                { id: 1, name: '零食', icon: '🍪', price: 8, stock: 15, category: 'snack' },
+                { id: 2, name: '糖果', icon: '🍬', price: 8, stock: 25, category: 'snack' },
+                { id: 3, name: '巧克力', icon: '🍫', price: 10, stock: 10, category: 'snack' },
+                { id: 4, name: '纸巾', icon: '🧻', price: 15, stock: 30, category: 'daily' },
+                { id: 5, name: '洗面奶', icon: '🧴', price: 20, stock: 8, category: 'daily' },
+                { id: 6, name: '牙刷', icon: '🪥', price: 12, stock: 12, category: 'daily' },
+            ],
+            
+            // 顾客列表
+            activeCustomers: [],
+            
+            // 升级配置
+            upgrades: [
+                { id: 'counter', name: '收银台', icon: '💰', baseCost: 100, costMultiplier: 1.5 },
+                { id: 'shelf', name: '货架', icon: '🛒', baseCost: 80, costMultiplier: 1.5 },
+                { id: 'decoration', name: '装饰', icon: '🎨', baseCost: 150, costMultiplier: 1.5 },
+            ],
+            
+            // 新手引导
+            tutorialStep: 0,
+            tutorialCompleted: false,
+            
+            // 游戏时间
+            gameTime: 0,
+            lastUpdate: Date.now(),
+        };
+
+        // ============ DOM 元素 ============
+        const DOM = {
+            gold: document.getElementById('gold'),
+            customers: document.getElementById('customers'),
+            sales: document.getElementById('sales'),
+            reputation: document.getElementById('reputation'),
+            day: document.getElementById('day'),
+            goalName: document.getElementById('goal-name'),
+            goalFill: document.getElementById('goal-fill'),
+            goalText: document.getElementById('goal-text'),
+            scene: document.getElementById('scene'),
+            customersContainer: document.getElementById('customers-container'),
+            productsGrid: document.getElementById('products-grid'),
+            upgradeItems: document.getElementById('upgrade-items'),
+            helpBtn: document.getElementById('help-btn'),
+            tutorialOverlay: document.getElementById('tutorial-overlay'),
+            tutorialTitle: document.getElementById('tutorial-title'),
+            tutorialContent: document.getElementById('tutorial-content'),
+            btnSkip: document.getElementById('btn-skip'),
+            btnNext: document.getElementById('btn-next'),
+            doorLeft: document.getElementById('door-left'),
+            doorRight: document.getElementById('door-right'),
+            staff: document.getElementById('staff'),
+        };
+
+        // ============ 顾客类 - v6 增强版 ============
+        class Customer {
+            constructor() {
+                this.id = Date.now() + Math.random();
+                this.state = GameConfig.CUSTOMER_STATE.SPAWNING;
+                this.x = GameConfig.PATH_NODES.SPAWN.x;
+                this.y = GameConfig.PATH_NODES.SPAWN.y;
+                this.targetX = this.x;
+                this.targetY = this.y;
+                this.speed = GameConfig.MOVEMENT_SPEED.WALKING;
+                this.element = null;
+                this.hasItem = false;
+                this.itemCount = 0;
+                this.patience = 100;
+                this.isVIP = Math.random() < 0.1;
+                this.isUrgent = Math.random() < 0.2;
+                this.mood = 'normal';
+                this.currentPath = [];
+                this.pathIndex = 0;
+                this.waitTime = 0;
+                this.browseTime = 0;
+                
+                this.create();
+            }
+
+            create() {
+                // 创建顾客 DOM 元素
+                const customer = document.createElement('div');
+                customer.className = 'customer';
+                customer.id = `customer-${this.id}`;
+                
+                // 随机颜色
+                const colors = ['#FFCC80', '#FFAB91', '#E6EE9C', '#B3E5FC', '#F8BBD9'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                customer.innerHTML = `
+                    <div class="customer-head">
+                        <div class="customer-face">
+                            <div class="customer-eyes">
+                                <div class="customer-eye"></div>
+                                <div class="customer-eye"></div>
+                            </div>
+                            <div class="customer-mouth"></div>
+                        </div>
+                    </div>
+                    <div class="customer-body" style="background: linear-gradient(180deg, ${color} 0%, ${this.adjustColor(color, -20)} 100%);"></div>
+                    <div class="customer-basket">
+                        <div class="basket-count">0</div>
+                    </div>
+                `;
+                
+                // VIP 标记
+                if (this.isVIP) {
+                    customer.classList.add('vip');
+                }
+                
+                // 急切顾客
+                if (this.isUrgent) {
+                    customer.classList.add('urgent');
+                }
+                
+                customer.style.left = `${this.x}px`;
+                customer.style.bottom = `${this.y}px`;
+                
+                DOM.customersContainer.appendChild(customer);
+                this.element = customer;
+                
+                // 开始进入动画
+                this.enter();
+            }
+
+            adjustColor(color, amount) {
+                const hex = color.replace('#', '');
+                const r = Math.max(0, Math.min(255, parseInt(hex.substr(0, 2), 16) + amount));
+                const g = Math.max(0, Math.min(255, parseInt(hex.substr(2, 2), 16) + amount));
+                const b = Math.max(0, Math.min(255, parseInt(hex.substr(4, 2), 16) + amount));
+                return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+            }
+
+            // 进入场景
+            enter() {
+                this.state = GameConfig.CUSTOMER_STATE.ENTERING;
+                this.openDoor();
+                
+                // 延迟移动到入口
+                setTimeout(() => {
+                    this.setPath([
+                        GameConfig.PATH_NODES.ENTRANCE,
+                    ]);
+                    this.element.classList.add('walking');
+                    
+                    // 欢迎粒子效果
+                    this.spawnParticles('welcome');
+                }, 500);
+            }
+
+            // 打开门
+            openDoor() {
+                DOM.doorLeft.classList.add('open');
+                DOM.doorRight.classList.add('open');
+                
+                setTimeout(() => {
+                    DOM.doorLeft.classList.remove('open');
+                    DOM.doorRight.classList.remove('open');
+                }, 1000);
+            }
+
+            // 设置移动路径
+            setPath(points) {
+                this.currentPath = points;
+                this.pathIndex = 0;
+                if (points.length > 0) {
+                    this.targetX = points[0].x;
+                    this.targetY = points[0].y;
+                }
+            }
+
+            // 更新位置
+            update(deltaTime) {
+                if (!this.element) return;
+
+                const dx = this.targetX - this.x;
+                const dy = this.targetY - this.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance > 2) {
+                    // 移动
+                    const moveX = (dx / distance) * this.speed * deltaTime;
+                    const moveY = (dy / distance) * this.speed * deltaTime;
+                    
+                    this.x += moveX;
+                    this.y += moveY;
+                    
+                    // 更新 DOM
+                    this.element.style.left = `${this.x}px`;
+                    this.element.style.bottom = `${this.y}px`;
+                    
+                    // 行走动画
+                    if (!this.element.classList.contains('walking')) {
+                        this.element.classList.add('walking');
+                    }
+                } else {
+                    // 到达目标点
+                    this.element.classList.remove('walking');
+                    this.onPathComplete();
+                }
+            }
+
+            // 路径完成回调
+            onPathComplete() {
+                this.pathIndex++;
+                
+                if (this.pathIndex < this.currentPath.length) {
+                    // 继续下一段路径
+                    const nextNode = this.currentPath[this.pathIndex];
+                    this.targetX = nextNode.x;
+                    this.targetY = nextNode.y;
+                } else {
+                    // 当前阶段完成
+                    this.onStageComplete();
+                }
+            }
+
+            // 阶段完成
+            onStageComplete() {
+                switch (this.state) {
+                    case GameConfig.CUSTOMER_STATE.ENTERING:
+                        // 进入浏览阶段
+                        this.state = GameConfig.CUSTOMER_STATE.BROWSING;
+                        this.browse();
+                        break;
+                        
+                    case GameConfig.CUSTOMER_STATE.BROWSING:
+                        // 购物完成，前往收银台
+                        this.state = GameConfig.CUSTOMER_STATE.WALKING_TO_REGISTER;
+                        this.goToRegister();
+                        break;
+                        
+                    case GameConfig.CUSTOMER_STATE.WALKING_TO_REGISTER:
+                        // 开始排队
+                        this.state = GameConfig.CUSTOMER_STATE.QUEUING;
+                        this.queue();
+                        break;
+                        
+                    case GameConfig.CUSTOMER_STATE.QUEUING:
+                        // 排队完成，前往付款
+                        this.state = GameConfig.CUSTOMER_STATE.PAYING;
+                        this.pay();
+                        break;
+                        
+                    case GameConfig.CUSTOMER_STATE.PAYING:
+                        // 付款完成，离开
+                        this.state = GameConfig.CUSTOMER_STATE.WALKING_TO_EXIT;
+                        this.leave();
+                        break;
+                        
+                    case GameConfig.CUSTOMER_STATE.WALKING_TO_EXIT:
+                        // 离开场景
+                        this.state = GameConfig.CUSTOMER_STATE.LEAVING;
+                        this.remove();
+                        break;
+                }
+            }
+
+            // 浏览商品
+            browse() {
+                this.element.classList.add('shopping');
+                this.speed = GameConfig.MOVEMENT_SPEED.BROWSING;
+                
+                // 随机选择货架并前往
+                const shelfSpots = [
+                    { x: 180, y: 300 },
+                    { x: 260, y: 300 },
+                    { x: 340, y: 300 },
+                    { x: 420, y: 300 },
+                    { x: 500, y: 300 },
+                ];
+                
+                const spot = shelfSpots[Math.floor(Math.random() * shelfSpots.length)];
+                
+                this.setPath([spot]);
+                
+                // 浏览时间
+                setTimeout(() => {
+                    if (this.state === GameConfig.CUSTOMER_STATE.BROWSING) {
+                        // 购买商品
+                        this.hasItem = true;
+                        this.itemCount = Math.floor(Math.random() * 3) + 1;
+                        this.element.classList.add('has-item');
+                        this.element.querySelector('.basket-count').textContent = this.itemCount;
+                        
+                        // 购买粒子效果
+                        this.spawnParticles('purchase');
+                        
+                        // 随机选择商品
+                        const randomProduct = GameState.products[Math.floor(Math.random() * GameState.products.length)];
+                        if (randomProduct.stock > 0) {
+                            randomProduct.stock--;
+                            // 销售金币
+                            const revenue = randomProduct.price;
+                            addGold(revenue);
+                            GameState.sales++;
+                            updateStats();
+                        }
+                    }
+                }, 2000 + Math.random() * 2000);
+            }
+
+            // 前往收银台
+            goToRegister() {
+                this.speed = GameConfig.MOVEMENT_SPEED.WALKING;
+                this.setPath([
+                    GameConfig.PATH_NODES.QUEUE_START,
+                    GameConfig.PATH_NODES.REGISTER,
+                ]);
+            }
+
+            // 排队等待
+            queue() {
+                this.element.classList.add('waiting');
+                this.mood = 'normal';
+                
+                // 模拟等待
+                const waitDuration = 3000 + Math.random() * 3000;
+                
+                this.waitTimer = setTimeout(() => {
+                    if (this.state === GameConfig.CUSTOMER_STATE.QUEUING) {
+                        this.onStageComplete();
+                    }
+                }, waitDuration);
+            }
+
+            // 付款
+            pay() {
+                this.element.classList.remove('waiting');
+                this.element.classList.add('paying');
+                
+                // 付款成功效果
+                setTimeout(() => {
+                    // 成功粒子
+                    this.spawnParticles('success');
+                    
+                    // 屏幕闪烁
+                    createScreenFlash();
+                    
+                    // 店员动画
+                    DOM.staff.classList.add('staff-serving');
+                    setTimeout(() => {
+                        DOM.staff.classList.remove('staff-serving');
+                    }, 500);
+                    
+                    // 金币动画
+                    createCoinAnimation(this.x, this.y);
+                    
+                    // 更新口碑
+                    GameState.reputation += 5;
+                    updateStats();
+                    
+                    this.mood = 'happy';
+                    this.updateMood();
+                    
+                }, 500);
+            }
+
+            // 离开
+            leave() {
+                this.speed = GameConfig.MOVEMENT_SPEED.RUSHING;
+                this.element.classList.remove('paying');
+                this.element.classList.add('walking');
+                
+                this.setPath([
+                    GameConfig.PATH_NODES.EXIT_START,
+                    GameConfig.PATH_NODES.EXIT,
+                ]);
+            }
+
+            // 移除顾客
+            remove() {
+                this.element.classList.add('leaving');
+                
+                setTimeout(() => {
+                    if (this.element && this.element.parentNode) {
+                        this.element.parentNode.removeChild(this.element);
+                    }
+                    
+                    // 从活跃顾客列表中移除
+                    const index = GameState.activeCustomers.indexOf(this);
+                    if (index > -1) {
+                        GameState.activeCustomers.splice(index, 1);
+                    }
+                    
+                    GameState.customers = GameState.activeCustomers.length;
+                    updateStats();
+                }, 500);
+            }
+
+            // 生成粒子效果
+            spawnParticles(type) {
+                const config = GameConfig.PARTICLE_CONFIG[type];
+                if (!config) return;
+                
+                for (let i = 0; i < config.count; i++) {
+                    setTimeout(() => {
+                        const particle = document.createElement('div');
+                        particle.className = `particle ${type}`;
+                        
+                        const size = config.size[0] + Math.random() * (config.size[1] - config.size[0]);
+                        const color = config.colors[Math.floor(Math.random() * config.colors.length)];
+                        
+                        particle.style.width = `${size}px`;
+                        particle.style.height = `${size}px`;
+                        particle.style.background = color;
+                        particle.style.left = `${this.x + 20 + (Math.random() - 0.5) * 40}px`;
+                        particle.style.bottom = `${this.y + 40 + (Math.random() - 0.5) * 40}px`;
+                        
+                        DOM.scene.appendChild(particle);
+                        
+                        setTimeout(() => {
+                            if (particle.parentNode) {
+                                particle.parentNode.removeChild(particle);
+                            }
+                        }, 1500);
+                    }, i * 50);
+                }
+            }
+
+            // 更新心情状态
+            updateMood() {
+                this.element.classList.remove('happy', 'sad', 'angry', 'impatient');
+                
+                switch (this.mood) {
+                    case 'happy':
+                        this.element.classList.add('happy');
+                        break;
+                    case 'sad':
+                        this.element.classList.add('sad');
+                        break;
+                    case 'angry':
+                        this.element.classList.add('angry');
+                        break;
+                    case 'impatient':
+                        this.element.classList.add('impatient');
+                        break;
+                }
+            }
+        }
+
+        // ============ 粒子效果函数 ============
+        function createScreenFlash() {
+            const flash = document.createElement('div');
+            flash.className = 'screen-flash';
+            document.body.appendChild(flash);
+            
+            setTimeout(() => {
+                if (flash.parentNode) {
+                    flash.parentNode.removeChild(flash);
+                }
+            }, 300);
+        }
+
+        function createCoinAnimation(x, y) {
+            const coin = document.createElement('div');
+            coin.className = 'coin-animation';
+            coin.textContent = '💰';
+            coin.style.left = `${x}px`;
+            coin.style.bottom = `${y + 50}px`;
+            
+            DOM.scene.appendChild(coin);
+            
+            setTimeout(() => {
+                if (coin.parentNode) {
+                    coin.parentNode.removeChild(coin);
+                }
+            }, 1000);
+        }
+
+        // ============ 游戏功能函数 ============
+        function addGold(amount) {
+            GameState.gold += amount;
+            GameState.dayProgress += amount;
+            
+            // 金币动画
+            DOM.gold.classList.add('animate');
+            setTimeout(() => {
+                DOM.gold.classList.remove('animate');
+            }, 300);
+            
+            updateStats();
+            checkGoal();
+        }
+
+        function updateStats() {
+            DOM.gold.textContent = GameState.gold;
+            DOM.customers.textContent = GameState.customers;
+            DOM.sales.textContent = GameState.sales;
+            DOM.reputation.textContent = GameState.reputation;
+            DOM.day.textContent = GameState.day;
+        }
+
+        function checkGoal() {
+            const progress = Math.min(100, (GameState.dayProgress / GameState.dayGoal) * 100);
+            DOM.goalFill.style.width = `${progress}%`;
+            DOM.goalText.textContent = `${GameState.dayProgress} / ${GameState.dayGoal} 金币`;
+            
+            if (GameState.dayProgress >= GameState.dayGoal) {
+                // 目标完成
+                GameState.day++;
+                GameState.dayProgress = 0;
+                GameState.dayGoal = Math.floor(GameState.dayGoal * 1.5);
+                DOM.goalName.textContent = `今日目标：赚取 ${GameState.dayGoal} 金币`;
+                
+                // 庆祝效果
+                spawnCelebration();
+            }
+        }
+
+        function spawnCelebration() {
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle success';
+                    
+                    const colors = ['#FFD700', '#FF69B4', '#00CED1', '#7CFC00', '#FF6347'];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    particle.style.width = `${5 + Math.random() * 10}px`;
+                    particle.style.height = particle.style.width;
+                    particle.style.background = color;
+                    particle.style.left = `${Math.random() * DOM.scene.offsetWidth}px`;
+                    particle.style.bottom = `${Math.random() * 200 + 100}px`;
+                    
+                    DOM.scene.appendChild(particle);
+                    
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 1000);
+                }, i * 50);
+            }
+        }
+
+        // ============ 渲染商品列表 ============
+        function renderProducts() {
+            DOM.productsGrid.innerHTML = '';
+            
+            GameState.products.forEach((product, index) => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="product-icon">${product.icon}</div>
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-price">💰 ${product.price}</div>
+                    <div class="product-controls">
+                        <button class="btn-control btn-minus" onclick="adjustPrice(${index}, -1)">-</button>
+                        <button class="btn-control btn-plus" onclick="adjustPrice(${index}, 1)">+</button>
+                    </div>
+                    <div class="product-stock">库存: ${product.stock}</div>
+                `;
+                
+                DOM.productsGrid.appendChild(card);
+            });
+        }
+
+        function adjustPrice(index, delta) {
+            const product = GameState.products[index];
+            product.price = Math.max(1, product.price + delta);
+            renderProducts();
+            renderUpgrades();
+        }
+
+        // ============ 渲染升级选项 ============
+        function renderUpgrades() {
+            DOM.upgradeItems.innerHTML = '';
+            
+            GameState.upgrades.forEach(upgrade => {
+                const level = GameState.facilities[upgrade.id];
+                const cost = Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, level - 1));
+                const canAfford = GameState.gold >= cost;
+                
+                const item = document.createElement('div');
+                item.className = `upgrade-item ${canAfford ? 'affordable' : ''}`;
+                item.innerHTML = `
+                    <div class="upgrade-icon">${upgrade.icon}</div>
+                    <div class="upgrade-info">
+                        <div class="upgrade-name">${upgrade.name} Lv.${level}</div>
+                        <div class="upgrade-cost">💰 ${cost}</div>
+                    </div>
+                `;
+                
+                if (canAfford) {
+                    item.onclick = () => purchaseUpgrade(upgrade.id);
+                }
+                
+                DOM.upgradeItems.appendChild(item);
+            });
+        }
+
+        function purchaseUpgrade(upgradeId) {
+            const upgrade = GameState.upgrades.find(u => u.id === upgradeId);
+            const level = GameState.facilities[upgradeId];
+            const cost = Math.floor(upgrade.baseCost * Math.pow(upgrade.costMultiplier, level - 1));
+            
+            if (GameState.gold >= cost) {
+                GameState.gold -= cost;
+                GameState.facilities[upgradeId]++;
+                
+                updateStats();
+                renderUpgrades();
+                
+                // 升级特效
+                createScreenFlash();
+            }
+        }
+
+        // ============ 新手引导系统 ============
+        function showTutorial(step) {
+            const tutorials = [
+                {
+                    title: '欢迎来到便利店！',
+                    content: '这是你的第一家便利店。点击商品可以调整价格和库存。',
+                },
+                {
+                    title: '商品定价',
+                    content: '点击 + 或 - 来调整商品价格。价格越合理，顾客购买越多！',
+                },
+                {
+                    title: '顾客来了',
+                    content: '顾客会自动来到便利店，他们会浏览商品并购买。',
+                },
+                {
+                    title: '升级设施',
+                    content: '赚够金币后，可以升级收银台、货架和装饰，提高运营效率！',
+                },
+                {
+                    title: '目标系统',
+                    content: '完成每日目标可以解锁新功能和获得奖励。加油！',
+                },
+            ];
+            
+            if (step >= tutorials.length) {
+                DOM.tutorialOverlay.classList.remove('show');
+                GameState.tutorialCompleted = true;
+                return;
+            }
+            
+            const tutorial = tutorials[step];
+            DOM.tutorialTitle.textContent = tutorial.title;
+            DOM.tutorialContent.textContent = tutorial.content;
+            DOM.tutorialOverlay.classList.add('show');
+        }
+
+        function nextTutorial() {
+            GameState.tutorialStep++;
+            showTutorial(GameState.tutorialStep);
+        }
+
+        function skipTutorial() {
+            DOM.tutorialOverlay.classList.remove('show');
+            GameState.tutorialCompleted = true;
+        }
+
+        // ============ 顾客生成系统 ============
+        function spawnCustomer() {
+            if (GameState.activeCustomers.length < 5) {
+                const customer = new Customer();
+                GameState.activeCustomers.push(customer);
+                GameState.customers = GameState.activeCustomers.length;
+                updateStats();
+            }
+        }
+
+        // ============ 游戏主循环 ============
+        let lastTime = Date.now();
+
+        function gameLoop() {
+            const now = Date.now();
+            const deltaTime = (now - lastTime) / 1000;
+            lastTime = now;
+            
+            // 更新所有顾客
+            GameState.activeCustomers.forEach(customer => {
+                customer.update(deltaTime);
+            });
+            
+            // 游戏时间
+            GameState.gameTime += deltaTime;
+            
+            // 随机生成顾客
+            if (Math.random() < 0.01) {
+                spawnCustomer();
+            }
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        // ============ 初始化 ============
+        function init() {
+            // 渲染界面
+            renderProducts();
+            renderUpgrades();
+            updateStats();
+            
+            // 绑定事件
+            DOM.helpBtn.onclick = () => {
+                if (!GameState.tutorialCompleted) {
+                    showTutorial(GameState.tutorialStep);
+                }
+            };
+            
+            DOM.btnSkip.onclick = skipTutorial;
+            DOM.btnNext.onclick = nextTutorial;
+            
+            // 启动游戏循环
+            gameLoop();
+            
+            // 初始顾客
+            setTimeout(() => {
+                spawnCustomer();
+            }, 1000);
+            
+            // 启动新手引导
+            setTimeout(() => {
+                if (!GameState.tutorialCompleted) {
+                    showTutorial(0);
+                }
+            }, 500);
+        }
+
+        // 启动游戏
+        init();
+    </script>
+</body>
+</html>
