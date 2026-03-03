@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>便利店小店主 - v6 增强美术版</title>
     <style>
-        /* ============ 色彩系统 ============ */
+        /* ============================================
+         * 便利店小店主 - v6 重构版
+         * 作者：大雄
+         * 主题：CSS 样式系统
+         * ============================================ */
+
+        /* ---------- 色彩系统 ---------- */
         :root {
             --primary: #FF7F50;
             --primary-light: #FFA07A;
@@ -23,6 +29,7 @@
             --error: #FF6B6B;
         }
 
+        /* ---------- 全局重置 ---------- */
         * {
             margin: 0;
             padding: 0;
@@ -37,6 +44,7 @@
             overflow-x: hidden;
         }
 
+        /* ---------- 游戏容器 ---------- */
         .game-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -46,7 +54,9 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
 
-        /* ============ 顶部状态栏 ============ */
+        /* ============================================
+         * 顶部状态栏
+         * ============================================ */
         .stats-bar {
             background: white;
             padding: 15px;
@@ -95,7 +105,9 @@
             color: #666;
         }
 
-        /* ============ 目标进度条 ============ */
+        /* ============================================
+         * 目标进度条
+         * ============================================ */
         .goal-section {
             padding: 15px;
             background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
@@ -149,7 +161,9 @@
             margin-top: 5px;
         }
 
-        /* ============ 增强场景区域 - v6 ============ */
+        /* ============================================
+         * 游戏场景区域
+         * ============================================ */
         .scene {
             position: relative;
             height: 500px;
@@ -157,7 +171,7 @@
             overflow: hidden;
         }
 
-        /* 地板 - 浅色瓷砖 */
+        /* ---------- 地板 ---------- */
         .floor {
             position: absolute;
             bottom: 0;
@@ -170,7 +184,6 @@
             background-color: #FAFAFA;
         }
 
-        /* 防滑垫 */
         .floor-mat {
             position: absolute;
             bottom: 20px;
@@ -182,7 +195,7 @@
             border: 2px solid #4E342E;
         }
 
-        /* 墙面 */
+        /* ---------- 墙面 ---------- */
         .wall {
             position: absolute;
             top: 0;
@@ -192,7 +205,6 @@
             background: linear-gradient(180deg, #FFFDE7 0%, #FFF8E1 100%);
         }
 
-        /* 腰线装饰 */
         .wall::after {
             content: '';
             position: absolute;
@@ -203,7 +215,7 @@
             background: linear-gradient(90deg, #FFE082 0%, #FFD54F 50%, #FFE082 100%);
         }
 
-        /* 店名招牌 */
+        /* ---------- 店名招牌 ---------- */
         .shop-sign {
             position: absolute;
             top: 20px;
@@ -220,7 +232,9 @@
             z-index: 10;
         }
 
-        /* ============ 入口区域 ============ */
+        /* ============================================
+         * 入口区域
+         * ============================================ */
         .entrance {
             position: absolute;
             bottom: 0;
@@ -290,7 +304,6 @@
             50% { box-shadow: 0 3px 20px rgba(229, 57, 53, 0.8); }
         }
 
-        /* 入口花篮 */
         .flower-basket {
             position: absolute;
             bottom: 110px;
@@ -306,8 +319,10 @@
             50% { transform: rotate(3deg); }
         }
 
-        /* ============ 货架        .sh区 ============ */
-elves-area {
+        /* ============================================
+         * 货架区域
+         * ============================================ */
+        .shelves-area {
             position: absolute;
             bottom: 80px;
             left: 150px;
@@ -327,7 +342,6 @@ elves-area {
             position: relative;
         }
 
-        /* 货架灯带 */
         .shelf::before {
             content: '';
             position: absolute;
@@ -382,7 +396,6 @@ elves-area {
             font-weight: bold;
         }
 
-        /* 促销立牌 */
         .promo-sign {
             position: absolute;
             right: -20px;
@@ -402,20 +415,9 @@ elves-area {
             50% { transform: rotate(10deg) translateY(-3px); }
         }
 
-        /* 货架端头 */
-        .shelf-end {
-            position: absolute;
-            right: -30px;
-            width: 25px;
-            height: 100%;
-            background: linear-gradient(180deg, #FF9800 0%, #F57C00 100%);
-            border-radius: 0 8px 8px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* ============ 收银台 ============ */
+        /* ============================================
+         * 收银台区域
+         * ============================================ */
         .register-area {
             position: absolute;
             bottom: 0;
@@ -434,7 +436,6 @@ elves-area {
             box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
 
-        /* 大理石台面 */
         .register::before {
             content: '';
             position: absolute;
@@ -446,7 +447,6 @@ elves-area {
             border-radius: 10px 10px 0 0;
         }
 
-        /* POS机 */
         .pos-machine {
             position: absolute;
             top: -40px;
@@ -473,7 +473,6 @@ elves-area {
             96% { background: #8BC34A; }
         }
 
-        /* 收银柜灯光 */
         .register-light {
             position: absolute;
             top: -10px;
@@ -492,7 +491,6 @@ elves-area {
             50% { opacity: 1; }
         }
 
-        /* 杂志架 */
         .magazine-rack {
             position: absolute;
             top: -20px;
@@ -518,7 +516,6 @@ elves-area {
         .magazine:nth-child(2) { background: #42A5F5; }
         .magazine:nth-child(3) { background: #66BB6A; }
 
-        /* 1米线 */
         .queue-line-marker {
             position: absolute;
             bottom: 80px;
@@ -529,7 +526,9 @@ elves-area {
             background: repeating-linear-gradient(90deg, var(--warning) 0px, var(--warning) 10px, transparent 10px, transparent 20px);
         }
 
-        /* ============ 出口区域 ============ */
+        /* ============================================
+         * 出口区域
+         * ============================================ */
         .exit-area {
             position: absolute;
             bottom: 0;
@@ -559,7 +558,6 @@ elves-area {
             text-align: center;
         }
 
-        /* 霓虹效果 */
         .neon-sign {
             position: absolute;
             top: 10px;
@@ -583,7 +581,6 @@ elves-area {
             97% { opacity: 1; }
         }
 
-        /* 回收箱 */
         .recycle-bin {
             position: absolute;
             bottom: 10px;
@@ -591,7 +588,9 @@ elves-area {
             font-size: 24px;
         }
 
-        /* ============ 店员区 ============ */
+        /* ============================================
+         * 店员区域
+         * ============================================ */
         .staff-area {
             position: absolute;
             bottom: 80px;
@@ -600,7 +599,6 @@ elves-area {
             height: 90px;
         }
 
-        /* 店员角色 */
         .staff {
             position: absolute;
             bottom: 0;
@@ -653,7 +651,6 @@ elves-area {
             border-radius: 2px;
         }
 
-        /* 店员待机动画 */
         .staff.idle {
             animation: staffIdle 2s ease-in-out infinite;
         }
@@ -672,7 +669,9 @@ elves-area {
             50% { transform: scale(1.1); }
         }
 
-        /* ============ 顾客角色 - v6 增强 ============ */
+        /* ============================================
+         * 顾客角色
+         * ============================================ */
         .customer {
             position: absolute;
             width: 40px;
@@ -682,7 +681,6 @@ elves-area {
             filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3));
         }
 
-        /* 顾客阴影 */
         .customer::before {
             content: '';
             position: absolute;
@@ -718,7 +716,6 @@ elves-area {
             background: linear-gradient(180deg, #FFCC80 0%, #FFB74D 100%);
         }
 
-        /* 顾客表情 */
         .customer-face {
             position: absolute;
             top: 5px;
@@ -756,7 +753,7 @@ elves-area {
             background: #333;
         }
 
-        /* 顾客状态表情 */
+        /* 顾客心情状态 */
         .customer.happy .customer-mouth {
             height: 4px;
             border-radius: 0 0 4px 4px;
@@ -812,7 +809,6 @@ elves-area {
             background: linear-gradient(180deg, #E1BEE7 0%, #CE93D8 100%);
         }
 
-        /* 急切顾客 */
         .customer.urgent {
             animation: urgentPulse 0.5s ease-in-out infinite;
         }
@@ -826,8 +822,7 @@ elves-area {
             background: linear-gradient(180deg, #FFCCBC 0%, #FFAB91 100%);
         }
 
-        /* ============ 顾客动作动画 ============ */
-        /* 行走动画 */
+        /* 顾客动作动画 */
         .customer.walking .customer-body {
             animation: walkBody 0.3s ease-in-out infinite;
         }
@@ -846,7 +841,6 @@ elves-area {
             50% { transform: translateX(-50%) rotate(3deg); }
         }
 
-        /* 购物动画 */
         .customer.shopping .customer-body {
             animation: shopBody 0.5s ease-in-out;
         }
@@ -857,7 +851,6 @@ elves-area {
             75% { transform: translateX(-50%) rotate(5deg); }
         }
 
-        /* 付款动画 */
         .customer.paying .customer-body {
             animation: payBody 0.3s ease-in-out;
         }
@@ -867,7 +860,6 @@ elves-area {
             50% { transform: translateX(-50%) scale(1.1); }
         }
 
-        /* 等待动画 */
         .customer.waiting .customer-body {
             animation: waitBody 2s ease-in-out infinite;
         }
@@ -887,7 +879,6 @@ elves-area {
             50% { transform: translateX(-50%) rotate(15deg); }
         }
 
-        /* 离开动画 */
         .customer.leaving {
             animation: leaveFade 0.5s ease-out forwards;
         }
@@ -928,7 +919,9 @@ elves-area {
             justify-content: center;
         }
 
-        /* ============ 粒子效果系统 ============ */
+        /* ============================================
+         * 粒子效果系统
+         * ============================================ */
         .particle {
             position: absolute;
             pointer-events: none;
@@ -941,12 +934,10 @@ elves-area {
             100% { opacity: 0; transform: scale(0); }
         }
 
-        /* 欢迎粒子 */
         .particle.welcome {
             animation: particleFade 1.5s ease-out forwards;
         }
 
-        /* 购买粒子 */
         .particle.purchase {
             animation: particleRise 1s ease-out forwards;
         }
@@ -956,7 +947,6 @@ elves-area {
             100% { opacity: 0; transform: translateY(-50px) scale(0); }
         }
 
-        /* 成功粒子 */
         .particle.success {
             animation: particleBurst 0.8s ease-out forwards;
         }
@@ -984,24 +974,9 @@ elves-area {
             100% { opacity: 0; transform: scale(2); }
         }
 
-        /* ============ 灯光效果 ============ */
-        .light-cone {
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-left: 30px solid transparent;
-            border-right: 30px solid transparent;
-            border-bottom: 80px solid rgba(255, 255, 200, 0.1);
-            pointer-events: none;
-        }
-
-        /* ============ 装饰元素 ============ */
-        .decoration {
-            position: absolute;
-            z-index: 5;
-        }
-
-        /* 墙面时钟 */
+        /* ============================================
+         * 装饰元素
+         * ============================================ */
         .wall-clock {
             position: absolute;
             top: 80px;
@@ -1054,7 +1029,6 @@ elves-area {
             border-radius: 50%;
         }
 
-        /* 电视屏 */
         .tv-screen {
             position: absolute;
             top: 80px;
@@ -1079,7 +1053,6 @@ elves-area {
             50% { opacity: 1; }
         }
 
-        /* 绿植 */
         .plant {
             position: absolute;
             bottom: 70px;
@@ -1093,7 +1066,9 @@ elves-area {
             50% { transform: rotate(2deg); }
         }
 
-        /* ============ 升级建议区 ============ */
+        /* ============================================
+         * 升级建议区
+         * ============================================ */
         .upgrade-section {
             padding: 15px;
             background: #FFF3E0;
@@ -1161,7 +1136,9 @@ elves-area {
             color: var(--primary);
         }
 
-        /* ============ 操作面板 ============ */
+        /* ============================================
+         * 操作面板
+         * ============================================ */
         .control-panel {
             background: white;
             padding: 20px;
@@ -1259,7 +1236,9 @@ elves-area {
             margin-top: 8px;
         }
 
-        /* ============ 帮助按钮 ============ */
+        /* ============================================
+         * 帮助按钮
+         * ============================================ */
         .help-btn {
             position: fixed;
             bottom: 30px;
@@ -1281,7 +1260,9 @@ elves-area {
             transform: scale(1.1);
         }
 
-        /* ============ 新手引导 ============ */
+        /* ============================================
+         * 新手引导
+         * ============================================ */
         .tutorial-overlay {
             position: fixed;
             top: 0;
@@ -1367,7 +1348,9 @@ elves-area {
             50% { outline-color: var(--primary-dark); }
         }
 
-        /* ============ 金币动画 ============ */
+        /* ============================================
+         * 金币动画
+         * ============================================ */
         .coin-animation {
             position: absolute;
             font-size: 20px;
@@ -1381,7 +1364,9 @@ elves-area {
             100% { opacity: 0; transform: translateY(100px) rotate(360deg); }
         }
 
-        /* ============ 屏幕闪烁效果 ============ */
+        /* ============================================
+         * 屏幕闪烁效果
+         * ============================================ */
         .screen-flash {
             position: fixed;
             top: 0;
@@ -1398,7 +1383,9 @@ elves-area {
             100% { background: transparent; opacity: 0; }
         }
 
-        /* ============ 响应式 ============ */
+        /* ============================================
+         * 响应式设计
+         * ============================================ */
         @media (max-width: 768px) {
             .stats-bar {
                 grid-template-columns: repeat(3, 1fr);
@@ -1415,6 +1402,7 @@ elves-area {
     </style>
 </head>
 <body>
+    <!-- 游戏容器 -->
     <div class="game-container">
         <!-- 顶部状态栏 -->
         <div class="stats-bar">
@@ -1457,7 +1445,7 @@ elves-area {
             <div class="goal-text" id="goal-text">0 / 100 金币</div>
         </div>
 
-        <!-- 游戏场景 - v6 增强版 -->
+        <!-- 游戏场景 -->
         <div class="scene" id="scene">
             <!-- 墙面 -->
             <div class="wall"></div>
@@ -1588,17 +1576,13 @@ elves-area {
                 <span>⬆️</span>
                 <span>升级设施</span>
             </div>
-            <div class="upgrade-items" id="upgrade-items">
-                <!-- 动态生成 -->
-            </div>
+            <div class="upgrade-items" id="upgrade-items"></div>
         </div>
 
         <!-- 操作面板 -->
         <div class="control-panel">
             <div class="panel-title">📦 商品管理</div>
-            <div class="products-grid" id="products-grid">
-                <!-- 动态生成 -->
-            </div>
+            <div class="products-grid" id="products-grid"></div>
         </div>
     </div>
 
@@ -1618,7 +1602,15 @@ elves-area {
     </div>
 
     <script>
-        // ============ 游戏配置 - v6 ============
+        /* ============================================
+         * 便利店小店主 - v6 重构版
+         * 作者：大雄
+         * 主题：JavaScript 游戏逻辑
+         * ============================================ */
+
+        // ============================================
+        // 模块一：游戏配置常量
+        // ============================================
         const GameConfig = {
             // 移动速度配置
             MOVEMENT_SPEED: {
@@ -1641,7 +1633,7 @@ elves-area {
                 EXIT: { x: -50, y: 450 },
             },
             
-            // 顾客状态
+            // 顾客状态枚举
             CUSTOMER_STATE: {
                 SPAWNING: 'spawning',
                 ENTERING: 'entering',
@@ -1672,17 +1664,33 @@ elves-area {
                     size: [3, 10],
                 },
             },
+
+            // 顾客生成配置
+            SPAWN_CONFIG: {
+                MAX_CUSTOMERS: 5,
+                SPAWN_CHANCE: 0.01,
+            },
+
+            // 顾客类型概率
+            CUSTOMER_TYPE: {
+                VIP_CHANCE: 0.1,
+                URGENT_CHANCE: 0.2,
+            },
         };
 
-        // ============ 游戏状态 ============
+        // ============================================
+        // 模块二：游戏状态管理
+        // ============================================
         const GameState = {
+            // 玩家资源
             gold: 100,
-            customers: 0,
-            sales: 0,
             reputation: 0,
             day: 1,
+            
+            // 游戏进度
             dayGoal: 100,
             dayProgress: 0,
+            sales: 0,
             
             // 设施等级
             facilities: {
@@ -1702,7 +1710,7 @@ elves-area {
                 { id: 6, name: '牙刷', icon: '🪥', price: 12, stock: 12, category: 'daily' },
             ],
             
-            // 顾客列表
+            // 活跃顾客列表
             activeCustomers: [],
             
             // 升级配置
@@ -1712,7 +1720,7 @@ elves-area {
                 { id: 'decoration', name: '装饰', icon: '🎨', baseCost: 150, costMultiplier: 1.5 },
             ],
             
-            // 新手引导
+            // 新手引导状态
             tutorialStep: 0,
             tutorialCompleted: false,
             
@@ -1721,63 +1729,178 @@ elves-area {
             lastUpdate: Date.now(),
         };
 
-        // ============ DOM 元素 ============
+        // ============================================
+        // 模块三：DOM 元素缓存
+        // ============================================
         const DOM = {
+            // 状态栏元素
             gold: document.getElementById('gold'),
             customers: document.getElementById('customers'),
             sales: document.getElementById('sales'),
             reputation: document.getElementById('reputation'),
             day: document.getElementById('day'),
+            
+            // 目标进度条
             goalName: document.getElementById('goal-name'),
             goalFill: document.getElementById('goal-fill'),
             goalText: document.getElementById('goal-text'),
+            
+            // 场景元素
             scene: document.getElementById('scene'),
             customersContainer: document.getElementById('customers-container'),
             productsGrid: document.getElementById('products-grid'),
             upgradeItems: document.getElementById('upgrade-items'),
+            
+            // 交互元素
             helpBtn: document.getElementById('help-btn'),
+            doorLeft: document.getElementById('door-left'),
+            doorRight: document.getElementById('door-right'),
+            staff: document.getElementById('staff'),
+            
+            // 新手引导
             tutorialOverlay: document.getElementById('tutorial-overlay'),
             tutorialTitle: document.getElementById('tutorial-title'),
             tutorialContent: document.getElementById('tutorial-content'),
             btnSkip: document.getElementById('btn-skip'),
             btnNext: document.getElementById('btn-next'),
-            doorLeft: document.getElementById('door-left'),
-            doorRight: document.getElementById('door-right'),
-            staff: document.getElementById('staff'),
         };
 
-        // ============ 顾客类 - v6 增强版 ============
+        // ============================================
+        // 模块四：工具函数
+        // ============================================
+        
+        /**
+         * 调整颜色亮度
+         * @param {string} color - 十六进制颜色值
+         * @param {number} amount - 调整量（正数变亮，负数变暗）
+         * @returns {string} 调整后的颜色
+         */
+        function adjustColor(color, amount) {
+            const hex = color.replace('#', '');
+            const r = Math.max(0, Math.min(255, parseInt(hex.substr(0, 2), 16) + amount));
+            const g = Math.max(0, Math.min(255, parseInt(hex.substr(2, 2), 16) + amount));
+            const b = Math.max(0, Math.min(255, parseInt(hex.substr(4, 2), 16) + amount));
+            return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+        }
+
+        // ============================================
+        // 模块五：特效系统
+        // ============================================
+        
+        /**
+         * 创建屏幕闪烁效果
+         */
+        function createScreenFlash() {
+            const flash = document.createElement('div');
+            flash.className = 'screen-flash';
+            document.body.appendChild(flash);
+            
+            setTimeout(() => {
+                if (flash.parentNode) {
+                    flash.parentNode.removeChild(flash);
+                }
+            }, 300);
+        }
+
+        /**
+         * 创建金币动画
+         * @param {number} x - X坐标
+         * @param {number} y - Y坐标
+         */
+        function createCoinAnimation(x, y) {
+            const coin = document.createElement('div');
+            coin.className = 'coin-animation';
+            coin.textContent = '💰';
+            coin.style.left = `${x}px`;
+            coin.style.bottom = `${y + 50}px`;
+            
+            DOM.scene.appendChild(coin);
+            
+            setTimeout(() => {
+                if (coin.parentNode) {
+                    coin.parentNode.removeChild(coin);
+                }
+            }, 1000);
+        }
+
+        /**
+         * 创建庆祝粒子效果
+         */
+        function spawnCelebration() {
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle success';
+                    
+                    const colors = ['#FFD700', '#FF69B4', '#00CED1', '#7CFC00', '#FF6347'];
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    particle.style.width = `${5 + Math.random() * 10}px`;
+                    particle.style.height = particle.style.width;
+                    particle.style.background = color;
+                    particle.style.left = `${Math.random() * DOM.scene.offsetWidth}px`;
+                    particle.style.bottom = `${Math.random() * 200 + 100}px`;
+                    
+                    DOM.scene.appendChild(particle);
+                    
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 1000);
+                }, i * 50);
+            }
+        }
+
+        // ============================================
+        // 模块六：顾客类
+         // ============================================
+        
+        /**
+         * 顾客类 - 管理单个顾客的行为和状态
+         */
         class Customer {
             constructor() {
+                // 生成唯一ID
                 this.id = Date.now() + Math.random();
+                
+                // 初始化状态
                 this.state = GameConfig.CUSTOMER_STATE.SPAWNING;
                 this.x = GameConfig.PATH_NODES.SPAWN.x;
                 this.y = GameConfig.PATH_NODES.SPAWN.y;
                 this.targetX = this.x;
                 this.targetY = this.y;
                 this.speed = GameConfig.MOVEMENT_SPEED.WALKING;
-                this.element = null;
+                
+                // 顾客属性
                 this.hasItem = false;
                 this.itemCount = 0;
                 this.patience = 100;
-                this.isVIP = Math.random() < 0.1;
-                this.isUrgent = Math.random() < 0.2;
+                this.isVIP = Math.random() < GameConfig.CUSTOMER_TYPE.VIP_CHANCE;
+                this.isUrgent = Math.random() < GameConfig.CUSTOMER_TYPE.URGENT_CHANCE;
                 this.mood = 'normal';
+                
+                // 路径相关
                 this.currentPath = [];
                 this.pathIndex = 0;
-                this.waitTime = 0;
-                this.browseTime = 0;
                 
+                // 定时器引用
+                this.waitTimer = null;
+                
+                // 创建DOM元素
+                this.element = null;
                 this.create();
             }
 
+            /**
+             * 创建顾客DOM元素
+             */
             create() {
-                // 创建顾客 DOM 元素
                 const customer = document.createElement('div');
                 customer.className = 'customer';
                 customer.id = `customer-${this.id}`;
                 
-                // 随机颜色
+                // 随机生成顾客肤色
                 const colors = ['#FFCC80', '#FFAB91', '#E6EE9C', '#B3E5FC', '#F8BBD9'];
                 const color = colors[Math.floor(Math.random() * colors.length)];
                 
@@ -1791,21 +1914,15 @@ elves-area {
                             <div class="customer-mouth"></div>
                         </div>
                     </div>
-                    <div class="customer-body" style="background: linear-gradient(180deg, ${color} 0%, ${this.adjustColor(color, -20)} 100%);"></div>
+                    <div class="customer-body" style="background: linear-gradient(180deg, ${color} 0%, ${adjustColor(color, -20)} 100%);"></div>
                     <div class="customer-basket">
                         <div class="basket-count">0</div>
                     </div>
                 `;
                 
-                // VIP 标记
-                if (this.isVIP) {
-                    customer.classList.add('vip');
-                }
-                
-                // 急切顾客
-                if (this.isUrgent) {
-                    customer.classList.add('urgent');
-                }
+                // 添加特殊状态类
+                if (this.isVIP) customer.classList.add('vip');
+                if (this.isUrgent) customer.classList.add('urgent');
                 
                 customer.style.left = `${this.x}px`;
                 customer.style.bottom = `${this.y}px`;
@@ -1813,36 +1930,13 @@ elves-area {
                 DOM.customersContainer.appendChild(customer);
                 this.element = customer;
                 
-                // 开始进入动画
+                // 开始进入场景
                 this.enter();
             }
 
-            adjustColor(color, amount) {
-                const hex = color.replace('#', '');
-                const r = Math.max(0, Math.min(255, parseInt(hex.substr(0, 2), 16) + amount));
-                const g = Math.max(0, Math.min(255, parseInt(hex.substr(2, 2), 16) + amount));
-                const b = Math.max(0, Math.min(255, parseInt(hex.substr(4, 2), 16) + amount));
-                return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-            }
-
-            // 进入场景
-            enter() {
-                this.state = GameConfig.CUSTOMER_STATE.ENTERING;
-                this.openDoor();
-                
-                // 延迟移动到入口
-                setTimeout(() => {
-                    this.setPath([
-                        GameConfig.PATH_NODES.ENTRANCE,
-                    ]);
-                    this.element.classList.add('walking');
-                    
-                    // 欢迎粒子效果
-                    this.spawnParticles('welcome');
-                }, 500);
-            }
-
-            // 打开门
+            /**
+             * 打开店门
+             */
             openDoor() {
                 DOM.doorLeft.classList.add('open');
                 DOM.doorRight.classList.add('open');
@@ -1853,7 +1947,26 @@ elves-area {
                 }, 1000);
             }
 
-            // 设置移动路径
+            /**
+             * 进入场景
+             */
+            enter() {
+                this.state = GameConfig.CUSTOMER_STATE.ENTERING;
+                this.openDoor();
+                
+                setTimeout(() => {
+                    this.setPath([GameConfig.PATH_NODES.ENTRANCE]);
+                    this.element.classList.add('walking');
+                    
+                    // 欢迎粒子效果
+                    this.spawnParticles('welcome');
+                }, 500);
+            }
+
+            /**
+             * 设置移动路径
+             * @param {Array} points - 路径点数组
+             */
             setPath(points) {
                 this.currentPath = points;
                 this.pathIndex = 0;
@@ -1863,7 +1976,10 @@ elves-area {
                 }
             }
 
-            // 更新位置
+            /**
+             * 更新顾客位置
+             * @param {number} deltaTime - 时间增量（秒）
+             */
             update(deltaTime) {
                 if (!this.element) return;
 
@@ -1872,18 +1988,18 @@ elves-area {
                 const distance = Math.sqrt(dx * dx + dy * dy);
 
                 if (distance > 2) {
-                    // 移动
+                    // 计算移动量
                     const moveX = (dx / distance) * this.speed * deltaTime;
                     const moveY = (dy / distance) * this.speed * deltaTime;
                     
                     this.x += moveX;
                     this.y += moveY;
                     
-                    // 更新 DOM
+                    // 更新DOM位置
                     this.element.style.left = `${this.x}px`;
                     this.element.style.bottom = `${this.y}px`;
                     
-                    // 行走动画
+                    // 添加行走动画
                     if (!this.element.classList.contains('walking')) {
                         this.element.classList.add('walking');
                     }
@@ -1894,7 +2010,9 @@ elves-area {
                 }
             }
 
-            // 路径完成回调
+            /**
+             * 路径完成回调
+             */
             onPathComplete() {
                 this.pathIndex++;
                 
@@ -1904,58 +2022,56 @@ elves-area {
                     this.targetX = nextNode.x;
                     this.targetY = nextNode.y;
                 } else {
-                    // 当前阶段完成
+                    // 当前阶段完成，处理下一阶段
                     this.onStageComplete();
                 }
             }
 
-            // 阶段完成
+            /**
+             * 阶段完成处理
+             */
             onStageComplete() {
                 switch (this.state) {
                     case GameConfig.CUSTOMER_STATE.ENTERING:
-                        // 进入浏览阶段
                         this.state = GameConfig.CUSTOMER_STATE.BROWSING;
                         this.browse();
                         break;
                         
                     case GameConfig.CUSTOMER_STATE.BROWSING:
-                        // 购物完成，前往收银台
                         this.state = GameConfig.CUSTOMER_STATE.WALKING_TO_REGISTER;
                         this.goToRegister();
                         break;
                         
                     case GameConfig.CUSTOMER_STATE.WALKING_TO_REGISTER:
-                        // 开始排队
                         this.state = GameConfig.CUSTOMER_STATE.QUEUING;
                         this.queue();
                         break;
                         
                     case GameConfig.CUSTOMER_STATE.QUEUING:
-                        // 排队完成，前往付款
                         this.state = GameConfig.CUSTOMER_STATE.PAYING;
                         this.pay();
                         break;
                         
                     case GameConfig.CUSTOMER_STATE.PAYING:
-                        // 付款完成，离开
                         this.state = GameConfig.CUSTOMER_STATE.WALKING_TO_EXIT;
                         this.leave();
                         break;
                         
                     case GameConfig.CUSTOMER_STATE.WALKING_TO_EXIT:
-                        // 离开场景
                         this.state = GameConfig.CUSTOMER_STATE.LEAVING;
                         this.remove();
                         break;
                 }
             }
 
-            // 浏览商品
+            /**
+             * 浏览商品
+             */
             browse() {
                 this.element.classList.add('shopping');
                 this.speed = GameConfig.MOVEMENT_SPEED.BROWSING;
                 
-                // 随机选择货架并前往
+                // 随机选择货架位置
                 const shelfSpots = [
                     { x: 180, y: 300 },
                     { x: 260, y: 300 },
@@ -1965,13 +2081,11 @@ elves-area {
                 ];
                 
                 const spot = shelfSpots[Math.floor(Math.random() * shelfSpots.length)];
-                
                 this.setPath([spot]);
                 
-                // 浏览时间
+                // 模拟浏览时间后购买
                 setTimeout(() => {
                     if (this.state === GameConfig.CUSTOMER_STATE.BROWSING) {
-                        // 购买商品
                         this.hasItem = true;
                         this.itemCount = Math.floor(Math.random() * 3) + 1;
                         this.element.classList.add('has-item');
@@ -1980,13 +2094,11 @@ elves-area {
                         // 购买粒子效果
                         this.spawnParticles('purchase');
                         
-                        // 随机选择商品
+                        // 随机选择商品并减少库存
                         const randomProduct = GameState.products[Math.floor(Math.random() * GameState.products.length)];
                         if (randomProduct.stock > 0) {
                             randomProduct.stock--;
-                            // 销售金币
-                            const revenue = randomProduct.price;
-                            addGold(revenue);
+                            addGold(randomProduct.price);
                             GameState.sales++;
                             updateStats();
                         }
@@ -1994,7 +2106,9 @@ elves-area {
                 }, 2000 + Math.random() * 2000);
             }
 
-            // 前往收银台
+            /**
+             * 前往收银台
+             */
             goToRegister() {
                 this.speed = GameConfig.MOVEMENT_SPEED.WALKING;
                 this.setPath([
@@ -2003,12 +2117,14 @@ elves-area {
                 ]);
             }
 
-            // 排队等待
+            /**
+             * 排队等待
+             */
             queue() {
                 this.element.classList.add('waiting');
                 this.mood = 'normal';
                 
-                // 模拟等待
+                // 随机等待时间
                 const waitDuration = 3000 + Math.random() * 3000;
                 
                 this.waitTimer = setTimeout(() => {
@@ -2018,12 +2134,13 @@ elves-area {
                 }, waitDuration);
             }
 
-            // 付款
+            /**
+             * 付款
+             */
             pay() {
                 this.element.classList.remove('waiting');
                 this.element.classList.add('paying');
                 
-                // 付款成功效果
                 setTimeout(() => {
                     // 成功粒子
                     this.spawnParticles('success');
@@ -2050,7 +2167,9 @@ elves-area {
                 }, 500);
             }
 
-            // 离开
+            /**
+             * 离开
+             */
             leave() {
                 this.speed = GameConfig.MOVEMENT_SPEED.RUSHING;
                 this.element.classList.remove('paying');
@@ -2062,7 +2181,9 @@ elves-area {
                 ]);
             }
 
-            // 移除顾客
+            /**
+             * 移除顾客
+             */
             remove() {
                 this.element.classList.add('leaving');
                 
@@ -2071,7 +2192,7 @@ elves-area {
                         this.element.parentNode.removeChild(this.element);
                     }
                     
-                    // 从活跃顾客列表中移除
+                    // 从活跃列表中移除
                     const index = GameState.activeCustomers.indexOf(this);
                     if (index > -1) {
                         GameState.activeCustomers.splice(index, 1);
@@ -2082,7 +2203,10 @@ elves-area {
                 }, 500);
             }
 
-            // 生成粒子效果
+            /**
+             * 生成粒子效果
+             * @param {string} type - 粒子类型
+             */
             spawnParticles(type) {
                 const config = GameConfig.PARTICLE_CONFIG[type];
                 if (!config) return;
@@ -2112,7 +2236,9 @@ elves-area {
                 }
             }
 
-            // 更新心情状态
+            /**
+             * 更新心情状态
+             */
             updateMood() {
                 this.element.classList.remove('happy', 'sad', 'angry', 'impatient');
                 
@@ -2133,36 +2259,14 @@ elves-area {
             }
         }
 
-        // ============ 粒子效果函数 ============
-        function createScreenFlash() {
-            const flash = document.createElement('div');
-            flash.className = 'screen-flash';
-            document.body.appendChild(flash);
-            
-            setTimeout(() => {
-                if (flash.parentNode) {
-                    flash.parentNode.removeChild(flash);
-                }
-            }, 300);
-        }
-
-        function createCoinAnimation(x, y) {
-            const coin = document.createElement('div');
-            coin.className = 'coin-animation';
-            coin.textContent = '💰';
-            coin.style.left = `${x}px`;
-            coin.style.bottom = `${y + 50}px`;
-            
-            DOM.scene.appendChild(coin);
-            
-            setTimeout(() => {
-                if (coin.parentNode) {
-                    coin.parentNode.removeChild(coin);
-                }
-            }, 1000);
-        }
-
-        // ============ 游戏功能函数 ============
+        // ============================================
+        // 模块七：游戏功能函数
+        // ============================================
+        
+        /**
+         * 增加金币
+         * @param {number} amount - 金币数量
+         */
         function addGold(amount) {
             GameState.gold += amount;
             GameState.dayProgress += amount;
@@ -2177,6 +2281,9 @@ elves-area {
             checkGoal();
         }
 
+        /**
+         * 更新状态显示
+         */
         function updateStats() {
             DOM.gold.textContent = GameState.gold;
             DOM.customers.textContent = GameState.customers;
@@ -2185,13 +2292,16 @@ elves-area {
             DOM.day.textContent = GameState.day;
         }
 
+        /**
+         * 检查目标完成
+         */
         function checkGoal() {
             const progress = Math.min(100, (GameState.dayProgress / GameState.dayGoal) * 100);
             DOM.goalFill.style.width = `${progress}%`;
             DOM.goalText.textContent = `${GameState.dayProgress} / ${GameState.dayGoal} 金币`;
             
             if (GameState.dayProgress >= GameState.dayGoal) {
-                // 目标完成
+                // 目标完成，进入下一天
                 GameState.day++;
                 GameState.dayProgress = 0;
                 GameState.dayGoal = Math.floor(GameState.dayGoal * 1.5);
@@ -2202,33 +2312,13 @@ elves-area {
             }
         }
 
-        function spawnCelebration() {
-            for (let i = 0; i < 30; i++) {
-                setTimeout(() => {
-                    const particle = document.createElement('div');
-                    particle.className = 'particle success';
-                    
-                    const colors = ['#FFD700', '#FF69B4', '#00CED1', '#7CFC00', '#FF6347'];
-                    const color = colors[Math.floor(Math.random() * colors.length)];
-                    
-                    particle.style.width = `${5 + Math.random() * 10}px`;
-                    particle.style.height = particle.style.width;
-                    particle.style.background = color;
-                    particle.style.left = `${Math.random() * DOM.scene.offsetWidth}px`;
-                    particle.style.bottom = `${Math.random() * 200 + 100}px`;
-                    
-                    DOM.scene.appendChild(particle);
-                    
-                    setTimeout(() => {
-                        if (particle.parentNode) {
-                            particle.parentNode.removeChild(particle);
-                        }
-                    }, 1000);
-                }, i * 50);
-            }
-        }
-
-        // ============ 渲染商品列表 ============
+        // ============================================
+        // 模块八：商品和升级系统
+        // ============================================
+        
+        /**
+         * 渲染商品列表
+         */
         function renderProducts() {
             DOM.productsGrid.innerHTML = '';
             
@@ -2250,6 +2340,11 @@ elves-area {
             });
         }
 
+        /**
+         * 调整商品价格
+         * @param {number} index - 商品索引
+         * @param {number} delta - 价格变化量
+         */
         function adjustPrice(index, delta) {
             const product = GameState.products[index];
             product.price = Math.max(1, product.price + delta);
@@ -2257,7 +2352,9 @@ elves-area {
             renderUpgrades();
         }
 
-        // ============ 渲染升级选项 ============
+        /**
+         * 渲染升级选项
+         */
         function renderUpgrades() {
             DOM.upgradeItems.innerHTML = '';
             
@@ -2284,6 +2381,10 @@ elves-area {
             });
         }
 
+        /**
+         * 购买升级
+         * @param {string} upgradeId - 升级ID
+         */
         function purchaseUpgrade(upgradeId) {
             const upgrade = GameState.upgrades.find(u => u.id === upgradeId);
             const level = GameState.facilities[upgradeId];
@@ -2301,56 +2402,78 @@ elves-area {
             }
         }
 
-        // ============ 新手引导系统 ============
+        // ============================================
+        // 模块九：新手指引系统
+        // ============================================
+        
+        /**
+         * 新手引导内容
+         */
+        const TutorialContent = [
+            {
+                title: '欢迎来到便利店！',
+                content: '这是你的第一家便利店。点击商品可以调整价格和库存。',
+            },
+            {
+                title: '商品定价',
+                content: '点击 + 或 - 来调整商品价格。价格越合理，顾客购买越多！',
+            },
+            {
+                title: '顾客来了',
+                content: '顾客会自动来到便利店，他们会浏览商品并购买。',
+            },
+            {
+                title: '升级设施',
+                content: '赚够金币后，可以升级收银台、货架和装饰，提高运营效率！',
+            },
+            {
+                title: '目标系统',
+                content: '完成每日目标可以解锁新功能和获得奖励。加油！',
+            },
+        ];
+
+        /**
+         * 显示新手引导
+         * @param {number} step - 引导步骤
+         */
         function showTutorial(step) {
-            const tutorials = [
-                {
-                    title: '欢迎来到便利店！',
-                    content: '这是你的第一家便利店。点击商品可以调整价格和库存。',
-                },
-                {
-                    title: '商品定价',
-                    content: '点击 + 或 - 来调整商品价格。价格越合理，顾客购买越多！',
-                },
-                {
-                    title: '顾客来了',
-                    content: '顾客会自动来到便利店，他们会浏览商品并购买。',
-                },
-                {
-                    title: '升级设施',
-                    content: '赚够金币后，可以升级收银台、货架和装饰，提高运营效率！',
-                },
-                {
-                    title: '目标系统',
-                    content: '完成每日目标可以解锁新功能和获得奖励。加油！',
-                },
-            ];
-            
-            if (step >= tutorials.length) {
+            if (step >= TutorialContent.length) {
                 DOM.tutorialOverlay.classList.remove('show');
                 GameState.tutorialCompleted = true;
                 return;
             }
             
-            const tutorial = tutorials[step];
+            const tutorial = TutorialContent[step];
             DOM.tutorialTitle.textContent = tutorial.title;
             DOM.tutorialContent.textContent = tutorial.content;
             DOM.tutorialOverlay.classList.add('show');
         }
 
+        /**
+         * 下一步引导
+         */
         function nextTutorial() {
             GameState.tutorialStep++;
             showTutorial(GameState.tutorialStep);
         }
 
+        /**
+         * 跳过引导
+         */
         function skipTutorial() {
             DOM.tutorialOverlay.classList.remove('show');
             GameState.tutorialCompleted = true;
         }
 
-        // ============ 顾客生成系统 ============
+        // ============================================
+        // 模块十：游戏循环和初始化
+        // ============================================
+        
+        /**
+         * 生成顾客
+         */
         function spawnCustomer() {
-            if (GameState.activeCustomers.length < 5) {
+            if (GameState.activeCustomers.length < GameConfig.SPAWN_CONFIG.MAX_CUSTOMERS) {
                 const customer = new Customer();
                 GameState.activeCustomers.push(customer);
                 GameState.customers = GameState.activeCustomers.length;
@@ -2358,7 +2481,9 @@ elves-area {
             }
         }
 
-        // ============ 游戏主循环 ============
+        /**
+         * 游戏主循环
+         */
         let lastTime = Date.now();
 
         function gameLoop() {
@@ -2375,14 +2500,16 @@ elves-area {
             GameState.gameTime += deltaTime;
             
             // 随机生成顾客
-            if (Math.random() < 0.01) {
+            if (Math.random() < GameConfig.SPAWN_CONFIG.SPAWN_CHANCE) {
                 spawnCustomer();
             }
             
             requestAnimationFrame(gameLoop);
         }
 
-        // ============ 初始化 ============
+        /**
+         * 初始化游戏
+         */
         function init() {
             // 渲染界面
             renderProducts();
